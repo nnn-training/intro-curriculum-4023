@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  form(method="post", action="/schedules")
+    input(type="hidden" name="_csrf" value!="#{csrfToken}")
+    div(class="form-group")
+      label(for="scheduleName") 予定名
+      input(id="scheduleName" class="form-control" type="text" name="scheduleName")
+    div(class="form-group")
+      label(for="memo") メモ
+      textarea(id="memo" class="form-control" name="memo")
+    div(class="form-group")
+      label(for="candidates") 候補日程 (改行して複数入力してください)
+      textarea(id="candidates" class="form-control" name="candidates")
+    button(class="btn btn-info" type="submit") 予定をつくる
