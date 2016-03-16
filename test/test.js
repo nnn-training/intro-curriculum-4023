@@ -8,7 +8,7 @@ let Schedule = require('../models/schedule');
 let Candidate = require('../models/candidate');
 let Availability = require('../models/availability');
 let Comment = require('../models/comment');
-let deleteScheduleAggrigate = require('../routes/schedules').deleteScheduleAggrigate;
+let deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
 
 describe('/login', () => {
   before(() => {
@@ -75,7 +75,7 @@ describe('/schedules', () => {
             .expect(/テスト候補2/)
             .expect(/テスト候補3/)
             .expect(200)
-            .end(() => { deleteScheduleAggrigate(createdSchedulePath.split('/schedules/')[1], done);});
+            .end(() => { deleteScheduleAggregate(createdSchedulePath.split('/schedules/')[1], done);});
         });
     });
   });
@@ -114,7 +114,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
                 }).then((availabilities) => {
                   assert.equal(availabilities.length, 1);
                   assert.equal(availabilities[0].availability, 2);
-                  deleteScheduleAggrigate(scheduleId, done);
+                  deleteScheduleAggregate(scheduleId, done);
                 });
               });
           });
@@ -153,7 +153,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
               }).then((comments) => {
                 assert.equal(comments.length, 1);
                 assert.equal(comments[0].comment, 'testcomment');
-                deleteScheduleAggrigate(scheduleId, done);
+                deleteScheduleAggregate(scheduleId, done);
               });
             });
         });
@@ -195,7 +195,7 @@ describe('/schedules/:scheduleId?edit=1', () => {
                 assert.equal(candidates.length, 2);
                 assert.equal(candidates[0].candidateName, 'テスト更新候補1');
                 assert.equal(candidates[1].candidateName, 'テスト更新候補2');
-                deleteScheduleAggrigate(scheduleId, done);
+                deleteScheduleAggregate(scheduleId, done);
               });
             });
         });
