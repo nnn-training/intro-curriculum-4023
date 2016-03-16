@@ -1,7 +1,7 @@
 'use strict';
 let express = require('express');
 let router = express.Router();
-let authenticationEnsurer = require('./authendication-ensurer');
+let authenticationEnsurer = require('./authentication-ensurer');
 let uuid = require('node-uuid');
 let Schedule = require('../models/schedule');
 let Candidate = require('../models/candidate');

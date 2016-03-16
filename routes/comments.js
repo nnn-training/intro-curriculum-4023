@@ -1,7 +1,7 @@
 'use strict';
 let express = require('express');
 let router = express.Router();
-let authenticationEnsurer = require('./authendication-ensurer');
+let authenticationEnsurer = require('./authentication-ensurer');
 let Comment = require('../models/comment');
 
 router.post('/:scheduleId/users/:userId/comments', authenticationEnsurer, (req, res, next) => {
