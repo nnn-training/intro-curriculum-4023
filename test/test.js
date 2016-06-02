@@ -1,14 +1,14 @@
 'use strict';
-let request = require('supertest');
-let assert = require('assert');
-let app = require('../app');
-let passportStub = require('passport-stub');
-let User = require('../models/user');
-let Schedule = require('../models/schedule');
-let Candidate = require('../models/candidate');
-let Availability = require('../models/availability');
-let Comment = require('../models/comment');
-let deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
+const request = require('supertest');
+const assert = require('assert');
+const app = require('../app');
+const passportStub = require('passport-stub');
+const User = require('../models/user');
+const Schedule = require('../models/schedule');
+const Candidate = require('../models/candidate');
+const Availability = require('../models/availability');
+const Comment = require('../models/comment');
+const deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
 
 describe('/login', () => {
   before(() => {
@@ -65,7 +65,7 @@ describe('/schedules', () => {
         .expect('Location', /schedules/)
         .expect(302)
         .end((err, res) => {
-          let createdSchedulePath = res.headers.location;
+          const createdSchedulePath = res.headers.location;
           request(app)
             .get(createdSchedulePath)
             .expect(/テスト予定1/)
@@ -98,8 +98,8 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
         .post('/schedules')
         .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' })
         .end((err, res) => {
-          let createdSchedulePath = res.headers.location;
-          let scheduleId = createdSchedulePath.split('/schedules/')[1];
+          const createdSchedulePath = res.headers.location;
+          const scheduleId = createdSchedulePath.split('/schedules/')[1];
           Candidate.findOne({
             where: { scheduleId: scheduleId }
           }).then((candidate) => {
@@ -140,8 +140,8 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
         .post('/schedules')
         .send({ scheduleName: 'テストコメント更新予定1', memo: 'テストコメント更新メモ1', candidates: 'テストコメント更新候補1' })
         .end((err, res) => {
-          let createdSchedulePath = res.headers.location;
-          let scheduleId = createdSchedulePath.split('/schedules/')[1];
+          const createdSchedulePath = res.headers.location;
+          const scheduleId = createdSchedulePath.split('/schedules/')[1];
           // 更新がされることをテスト
           request(app)
             .post(`/schedules/${scheduleId}/users/${0}/comments`)
@@ -178,8 +178,8 @@ describe('/schedules/:scheduleId?edit=1', () => {
         .post('/schedules')
         .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
         .end((err, res) => {
-          let createdSchedulePath = res.headers.location;
-          let scheduleId = createdSchedulePath.split('/schedules/')[1];
+          const createdSchedulePath = res.headers.location;
+          const scheduleId = createdSchedulePath.split('/schedules/')[1];
           // 更新がされることをテスト
           request(app)
             .post(`/schedules/${scheduleId}?edit=1`)
@@ -220,11 +220,11 @@ describe('/schedules/:scheduleId?delete=1', () => {
         .post('/schedules')
         .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
         .end((err, res) => {
-          let createdSchedulePath = res.headers.location;
-          let scheduleId = createdSchedulePath.split('/schedules/')[1];
+          const createdSchedulePath = res.headers.location;
+          const scheduleId = createdSchedulePath.split('/schedules/')[1];
 
           // 出欠作成
-          let promiseAvailability = Candidate.findOne({
+          const promiseAvailability = Candidate.findOne({
             where: { scheduleId: scheduleId }
           }).then((candidate) => {
             return new Promise((resolve) => {
@@ -236,7 +236,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
           });
 
           // コメント作成
-          let promiseComment = new Promise((resolve) => {
+          const promiseComment = new Promise((resolve) => {
             request(app)
               .post(`/schedules/${scheduleId}/users/${0}/comments`)
               .send({ comment: 'testcomment' })
@@ -245,7 +245,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
           });
 
           // 削除
-          let promiseDeleted = Promise.all([promiseAvailability, promiseComment]).then(() => {
+          const promiseDeleted = Promise.all([promiseAvailability, promiseComment]).then(() => {
             return new Promise((resolve) => {
               request(app)
                 .post(`/schedules/${scheduleId}?delete=1`)
@@ -255,22 +255,22 @@ describe('/schedules/:scheduleId?delete=1', () => {
 
           // テスト
           promiseDeleted.then(() => {
-            let p1 = Comment.findAll({
+            const p1 = Comment.findAll({
               where: { scheduleId: scheduleId }
             }).then((comments) => {
               assert.equal(comments.length, 0);
             });
-            let p2 = Availability.findAll({
+            const p2 = Availability.findAll({
               where: { scheduleId: scheduleId }
             }).then((availabilities) => {
               assert.equal(availabilities.length, 0);
             });
-            let p3 = Candidate.findAll({
+            const p3 = Candidate.findAll({
               where: { scheduleId: scheduleId }
             }).then((candidates) => {
               assert.equal(candidates.length, 0);
             });
-            let p4 = Schedule.findById(scheduleId).then((schedule) => {
+            const p4 = Schedule.findById(scheduleId).then((schedule) => {
               assert.equal(!schedule, true);
             });
             Promise.all([p1, p2, p3, p4]).then(() => {

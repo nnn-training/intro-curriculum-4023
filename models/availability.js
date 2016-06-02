@@ -1,8 +1,8 @@
 'use strict';
-let loader = require('./sequelize-loader');
-let Sequelize = loader.Sequelize;
+const loader = require('./sequelize-loader');
+const Sequelize = loader.Sequelize;
 
-let Availability = loader.database.define('availabilities', {
+const Availability = loader.database.define('availabilities', {
   candidateId: {
     type: Sequelize.INTEGER,
     primaryKey: true,
