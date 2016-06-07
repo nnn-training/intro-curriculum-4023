@@ -1,13 +1,13 @@
 'use strict';
-let express = require('express');
-let router = express.Router();
-let authenticationEnsurer = require('./authentication-ensurer');
-let Comment = require('../models/comment');
+const express = require('express');
+const router = express.Router();
+const authenticationEnsurer = require('./authentication-ensurer');
+const Comment = require('../models/comment');
 
 router.post('/:scheduleId/users/:userId/comments', authenticationEnsurer, (req, res, next) => {
-  let scheduleId = req.params.scheduleId;
-  let userId = req.params.userId;
-  let comment = req.body.comment;
+  const scheduleId = req.params.scheduleId;
+  const userId = req.params.userId;
+  const comment = req.body.comment;
 
   Comment.upsert({
     scheduleId: scheduleId,

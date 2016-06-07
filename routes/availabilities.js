@@ -1,13 +1,13 @@
 'use strict';
-let express = require('express');
-let router = express.Router();
-let authenticationEnsurer = require('./authentication-ensurer');
-let Availability = require('../models/availability');
+const express = require('express');
+const router = express.Router();
+const authenticationEnsurer = require('./authentication-ensurer');
+const Availability = require('../models/availability');
 
 router.post('/:scheduleId/users/:userId/candidates/:candidateId', authenticationEnsurer, (req, res, next) => {
-  let scheduleId = req.params.scheduleId;
-  let userId = req.params.userId;
-  let candidateId = req.params.candidateId;
+  const scheduleId = req.params.scheduleId;
+  const userId = req.params.userId;
+  const candidateId = req.params.candidateId;
   let availability = req.body.availability;
   availability = availability ? parseInt(availability) : 0;
 

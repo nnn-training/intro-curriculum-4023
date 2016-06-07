@@ -1,8 +1,8 @@
 'use strict';
-let loader = require('./sequelize-loader');
-let Sequelize = loader.Sequelize;
+const loader = require('./sequelize-loader');
+const Sequelize = loader.Sequelize;
 
-let Schedule = loader.database.define('schedules', {
+const Schedule = loader.database.define('schedules', {
   scheduleId: {
     type: Sequelize.UUID,
     primaryKey: true,

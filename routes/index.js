@@ -1,12 +1,12 @@
 'use strict';
-let express = require('express');
-let router = express.Router();
-let Schedule = require('../models/schedule');
-let moment = require('moment-timezone');
+const express = require('express');
+const router = express.Router();
+const Schedule = require('../models/schedule');
+const moment = require('moment-timezone');
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  let title = '予定調整くん';
+  const title = '予定調整くん';
   if (req.user) {
     Schedule.findAll({
       where: {

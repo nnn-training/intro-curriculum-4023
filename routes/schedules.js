@@ -1,23 +1,23 @@
 'use strict';
-let express = require('express');
-let router = express.Router();
-let authenticationEnsurer = require('./authentication-ensurer');
-let uuid = require('node-uuid');
-let Schedule = require('../models/schedule');
-let Candidate = require('../models/candidate');
-let User = require('../models/user');
-let Availability = require('../models/availability');
-let Comment = require('../models/comment');
-let csrf = require('csurf');
-let csrfProtection = csrf({ cookie: true });
+const express = require('express');
+const router = express.Router();
+const authenticationEnsurer = require('./authentication-ensurer');
+const uuid = require('node-uuid');
+const Schedule = require('../models/schedule');
+const Candidate = require('../models/candidate');
+const User = require('../models/user');
+const Availability = require('../models/availability');
+const Comment = require('../models/comment');
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: true });
 
 router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {
   res.render('new', { user: req.user, csrfToken: req.csrfToken() });
 });
 
 router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
-  let scheduleId = uuid.v4();
-  let updatedAt = new Date();
+  const scheduleId = uuid.v4();
+  const updatedAt = new Date();
   Schedule.create({
     scheduleId: scheduleId,
     scheduleName: req.body.scheduleName.slice(0, 255),
@@ -50,7 +50,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         order: '"candidateId" ASC'
       });
     } else {
-      let err = new Error('指定された予定は見つかりません');
+      const err = new Error('指定された予定は見つかりません');
       err.status = 404;
       next(err);
     }
@@ -69,16 +69,15 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     });
   }).then((availabilities) => {
     // 出欠 MapMap(キー:ユーザー ID, 値:出欠Map(キー:候補 ID, 値:出欠)) を作成する
-    let availabilityMapMap = new Map(); // key: userId, value: Map(key: candidateId, availability)
+    const availabilityMapMap = new Map(); // key: userId, value: Map(key: candidateId, availability)
     availabilities.forEach((a) => {
-      let map = availabilityMapMap.get(a.user.userId);
-      map = map ? map : new Map();
+      const map = availabilityMapMap.get(a.user.userId) || new Map();
       map.set(a.candidateId, a.availability);
       availabilityMapMap.set(a.user.userId, map);
     });
 
     // 閲覧ユーザーと出欠に紐づくユーザーからユーザー Map (キー:ユーザー ID, 値:ユーザー) を作る
-    let userMap = new Map(); // key: userId, value: User
+    const userMap = new Map(); // key: userId, value: User
     userMap.set(parseInt(req.user.id), {
       isSelf: true,
       userId: parseInt(req.user.id),
@@ -93,13 +92,11 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     });
 
     // 全ユーザー、全候補で二重ループしてそれぞれの出欠の値がない場合には、「欠席」を設定する
-    let users = Array.from(userMap).map((keyValue) => keyValue[1]);
+    const users = Array.from(userMap).map((keyValue) => keyValue[1]);
     users.forEach((u) => {
       storedCandidates.forEach((c) => {
-        let map = availabilityMapMap.get(u.userId);
-        map = map ? map : new Map();
-        let a = map.get(c.candidateId);
-        a = a ? a : 0; // デフォルト値は 0 を利用
+        const map = availabilityMapMap.get(u.userId) || new Map();
+        const a = map.get(c.candidateId) || 0; // デフォルト値は 0 を利用
         map.set(c.candidateId, a);
         availabilityMapMap.set(u.userId, map);
       });
@@ -109,7 +106,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     return Comment.findAll({
       where: { scheduleId: storedSchedule.scheduleId }
     }).then((comments) => {
-      let commentMap = new Map();  // key: userId, value: comment
+      const commentMap = new Map();  // key: userId, value: comment
       comments.forEach((comment) => {
         commentMap.set(comment.userId, comment.comment);
       });
@@ -144,7 +141,7 @@ router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res
         });
       });
     } else {
-      let err = new Error('指定された予定がない、または、予定する権限がありません');
+      const err = new Error('指定された予定がない、または、予定する権限がありません');
       err.status = 404;
       next(err);
     }
@@ -163,7 +160,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
       }
     }).then((schedule) => {
       if (isMine(req, schedule)) { // 作成者のみ
-        let updatedAt = new Date();
+        const updatedAt = new Date();
         schedule.update({
           scheduleId: schedule.scheduleId,
           scheduleName: req.body.scheduleName.slice(0, 255),
@@ -176,7 +173,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
             order: '"candidateId" ASC'
           }).then((candidates) => {
             // 追加されているかチェック
-            let candidateNames = parseCandidateNames(req);
+            const candidateNames = parseCandidateNames(req);
             if (candidateNames) {
               createCandidatesAndRedirect(candidateNames, schedule.scheduleId, res);
             } else {
@@ -185,7 +182,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
           });
         });
       } else {
-        let err = new Error('指定された予定がない、または、編集する権限がありません');
+        const err = new Error('指定された予定がない、または、編集する権限がありません');
         err.status = 404;
         next(err);
       }
@@ -195,14 +192,14 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
       res.redirect('/');
     });
   } else {
-    let err = new Error('不正なリクエストです');
+    const err = new Error('不正なリクエストです');
     err.status = 400;
     next(err);
   }
 });
 
 function deleteScheduleAggregate(scheduleId, done) {
-  let promiseCommentDestroy = Comment.findAll({
+  const promiseCommentDestroy = Comment.findAll({
     where: { scheduleId: scheduleId }
   }).then((comments) => {
     return Promise.all(comments.map((c) => { return c.destroy(); }));
@@ -211,14 +208,14 @@ function deleteScheduleAggregate(scheduleId, done) {
   Availability.findAll({
     where: { scheduleId: scheduleId }
   }).then((availabilities) => {
-    let promises = availabilities.map((a) => { return a.destroy(); });
+    const promises = availabilities.map((a) => { return a.destroy(); });
     return Promise.all(promises);
   }).then(() => {
     return Candidate.findAll({
       where: { scheduleId: scheduleId }
     });
   }).then((candidates) => {
-    let promises = candidates.map((c) => { return c.destroy(); });
+    const promises = candidates.map((c) => { return c.destroy(); });
     promises.push(promiseCommentDestroy);
     return Promise.all(promises);
   }).then(() => {
@@ -229,7 +226,7 @@ function deleteScheduleAggregate(scheduleId, done) {
 router.deleteScheduleAggregate = deleteScheduleAggregate;
 
 function createCandidatesAndRedirect(candidateNames, scheduleId, res) {
-    let candidates = candidateNames.map((c) => { return {
+    const candidates = candidateNames.map((c) => { return {
       candidateName: c,
       scheduleId: scheduleId
     };});
