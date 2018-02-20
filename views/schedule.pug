@@ -2,11 +2,11 @@ extends layout
 
 block content
   div(class="panel panel-info")
-    div(class="panel-heading")
+    div.panel-heading
       h4 #{schedule.scheduleName}
-    div(class="panel-body")
+    div.panel-body
       p(style="white-space:pre;") #{schedule.memo}
-    div(class="panel-footer")
+    div.panel-footer
       p 作成者: #{schedule.user.username}
   - var isMine = parseInt(user.id) === schedule.user.userId
   if isMine
