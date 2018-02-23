@@ -29,10 +29,10 @@ block content
           td(class="#{tdAvailabilityClasses[availability]}")
             if user.isSelf
               button(class="availability-toggle-button btn-lg #{buttonStyles[availability]}"
-                data-schedule-id="#{schedule.scheduleId}"
-                data-user-id="#{user.userId}"
-                data-candidate-id="#{candidate.candidateId}"
-                data-availability="#{availability}") #{availabilityLabels[availability]}
+                data-schedule-id=schedule.scheduleId
+                data-user-id=user.userId
+                data-candidate-id=candidate.candidateId
+                data-availability=availability).availability-toggle-button #{availabilityLabels[availability]}
             else
               h3 #{availabilityLabels[availability]}
     tr
@@ -44,8 +44,8 @@ block content
               small(id="self-comment") #{commentMap.get(user.userId)}
             button(class="btn-xs btn-info"
               id="self-comment-button"
-              data-schedule-id="#{schedule.scheduleId}"
-              data-user-id="#{user.userId}") 編集
+              data-schedule-id=schedule.scheduleId
+              data-user-id=user.userId) 編集
         else
           td
             p
