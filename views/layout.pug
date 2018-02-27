@@ -8,17 +8,17 @@ html
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous")
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous")
   body
-    nav(class="navbar navbar-default")
-      div(class="navbar-header")
-        a(class="navbar-brand" href="/") 予定調整くん
-      div(class="container-fluid")
-        ul(class="nav navbar-nav navbar-right")
+    nav.navbar.navbar-default
+      div.navbar-header
+        a(href="/").navbar-brand 予定調整くん
+      div.container-fluid
+        ul.nav.navbar-nav.navbar-right
           if user
             li
               a(href="/logout") #{user.username} をログアウト
           else
             li
               a(href="/login") ログイン
-    div(class="container")
+    div.container
       block content
     script(src="/javascripts/bundle.js")
