@@ -5,20 +5,18 @@ html
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible" content="IE=edge")
     meta(name="viewport" content="width=device-width, initial-scale=1")
-    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous")
-    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous")
+    link(href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm", crossorigin="anonymous")
   body
-    nav.navbar.navbar-default
+    nav.navbar.navbar-light.bg-light
       div.navbar-header
-        a(href="/").navbar-brand 予定調整くん
-      div.container-fluid
-        ul.nav.navbar-nav.navbar-right
-          if user
-            li
-              a(href="/logout") #{user.username} をログアウト
-          else
-            li
-              a(href="/login") ログイン
+        a(href="/").navbar-brand.nav-link 予定調整くん
+      ul.navbar-nav
+        if user
+          li.nav-item
+            a(href="/logout").nav-link #{user.username} をログアウト
+        else
+          li.nav-item
+            a(href="/login").nav-link ログイン
     div.container
       block content
     script(src="/javascripts/bundle.js")

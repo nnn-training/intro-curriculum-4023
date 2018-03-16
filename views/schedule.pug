@@ -1,18 +1,18 @@
 extends layout
 
 block content
-  div.panel.panel-info
-    div.panel-heading
+  div.card.my-3
+    div.card-header
       h4 #{schedule.scheduleName}
-    div.panel-body
+    div.card-body
       p(style="white-space:pre;") #{schedule.memo}
-    div.panel-footer
+    div.card-footer
       p 作成者: #{schedule.user.username}
   - var isMine = parseInt(user.id) === schedule.user.userId
   if isMine
     div
       a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info この予定を編集する
-  h3 出欠表
+  h3.my-3 出欠表
   table.table.table-bordered
     tr
       th 予定
@@ -24,9 +24,8 @@ block content
         each user in users
           - var availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
           - var availabilityLabels = ['欠', '？', '出'];
-          - var buttonStyles = ['btn-danger', 'btn-default', 'btn-success'];
-          - var tdAvailabilityClasses = ['bg-danger', 'bg-default', 'bg-success'];
-          td(class=`${tdAvailabilityClasses[availability]}`)
+          - var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
+          td
             if user.isSelf
               button(class=`availability-toggle-button btn-lg ${buttonStyles[availability]}`
                 data-schedule-id=schedule.scheduleId
@@ -41,7 +40,7 @@ block content
         if user.isSelf
           td
             p
-              small(id="self-comment") #{commentMap.get(user.userId)}
+              small#self-comment #{commentMap.get(user.userId)}
             button(
               data-schedule-id=schedule.scheduleId
               data-user-id=user.userId)#self-comment-button.btn-xs.btn-info 編集

@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h3 予定の編集
+  h3.my-3 予定の編集
   form(method="post", action=`/schedules/${schedule.scheduleId}?edit=1`)
     input(type="hidden" name="_csrf" value!=csrfToken)
     div.form-group
@@ -15,11 +15,11 @@ block content
       ul.list-group
         each candidate in candidates
           li.list-group-item #{candidate.candidateName}
-      label(for="candidates") 候補日程の追加 (改行して複数入力してください)
+      label(for="candidates").my-2 候補日程の追加 (改行して複数入力してください)
       textarea(name="candidates")#candidates.form-control
     div
       button(type="submit").btn.btn-info 以上の内容で予定を編集する
-  h3 危険な変更
+  h3.my-3 危険な変更
   form(method="post", action=`/schedules/${schedule.scheduleId}?delete=1`)
     input(type="hidden" name="_csrf" value!=csrfToken)
     button(type="submit").btn.btn-danger この予定を削除する
