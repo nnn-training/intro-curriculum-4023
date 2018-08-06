@@ -41,13 +41,13 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
     where: {
       scheduleId: req.params.scheduleId
     },
-    order: '"updatedAt" DESC'
+    order: [['"updatedAt"', 'DESC']]
   }).then((schedule) => {
     if (schedule) {
       storedSchedule = schedule;
       return Candidate.findAll({
         where: { scheduleId: schedule.scheduleId },
-        order: '"candidateId" ASC'
+        order: [['"candidateId"', 'ASC']]
       });
     } else {
       const err = new Error('指定された予定は見つかりません');
@@ -65,7 +65,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         }
       ],
       where: { scheduleId: storedSchedule.scheduleId },
-      order: '"user.username" ASC, "candidateId" ASC'
+      order: [[User, '"username"', 'ASC'], ['"candidateId"', 'ASC']]
     });
   }).then((availabilities) => {
     // 出欠 MapMap(キー:ユーザー ID, 値:出欠Map(キー:候補 ID, 値:出欠)) を作成する
@@ -131,7 +131,7 @@ router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res
     if (isMine(req, schedule)) { // 作成者のみが編集フォームを開ける
       Candidate.findAll({
         where: { scheduleId: schedule.scheduleId },
-        order: '"candidateId" ASC'
+        order: [['"candidateId"', 'ASC']]
       }).then((candidates) => {
         res.render('edit', {
           user: req.user,
@@ -170,7 +170,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
         }).then((schedule) => {
           Candidate.findAll({
             where: { scheduleId: schedule.scheduleId },
-            order: '"candidateId" ASC'
+            order: [['"candidateId"', 'ASC']]
           }).then((candidates) => {
             // 追加されているかチェック
             const candidateNames = parseCandidateNames(req);
@@ -229,13 +229,15 @@ function deleteScheduleAggregate(scheduleId, done, err) {
 router.deleteScheduleAggregate = deleteScheduleAggregate;
 
 function createCandidatesAndRedirect(candidateNames, scheduleId, res) {
-    const candidates = candidateNames.map((c) => { return {
+  const candidates = candidateNames.map((c) => {
+    return {
       candidateName: c,
       scheduleId: scheduleId
-    };});
-    Candidate.bulkCreate(candidates).then(() => {
-          res.redirect('/schedules/' + scheduleId);
-    });
+    };
+  });
+  Candidate.bulkCreate(candidates).then(() => {
+    res.redirect('/schedules/' + scheduleId);
+  });
 }
 
 function parseCandidateNames(req) {

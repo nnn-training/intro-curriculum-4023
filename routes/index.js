@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
       where: {
         createdBy: req.user.id
       },
-      order: '"updatedAt" DESC'
+      order: [['"updatedAt"', 'DESC']]
     }).then((schedules) => {
       schedules.forEach((schedule) => {
         schedule.formattedUpdatedAt = moment(schedule.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
