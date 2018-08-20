@@ -1,8 +1,8 @@
 extends layout
 
 block content
-    input(type="hidden" name="_csrf" value!=csrfToken)
   form(method="post", action="/schedules").my-3
+    input(type="hidden" name="_csrf" value!=csrfToken)
     div.form-group
       label(for="scheduleName") 予定名
       input(type="text" name="scheduleName")#scheduleName.form-control
