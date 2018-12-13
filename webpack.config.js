@@ -1,6 +1,7 @@
 module.exports = {
   context: __dirname + '/app',
   entry: './entry',
+  mode: 'none',
   output: {
     path: __dirname + '/public/javascripts',
     filename: 'bundle.js'
@@ -12,7 +13,7 @@ module.exports = {
       use: {
         loader: 'babel-loader',
         options: {
-          presets: ['env']
+          presets: ['@babel/preset-env']
         }
       }
     }]
