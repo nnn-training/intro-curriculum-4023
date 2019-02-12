@@ -220,7 +220,8 @@ describe('/schedules/:scheduleId?edit=1', () => {
                     assert.equal(s.memo, 'テスト更新メモ2');
                   });
                   Candidate.findAll({
-                    where: { scheduleId: scheduleId }
+                    where: { scheduleId: scheduleId },
+                    order: [['"candidateId"', 'ASC']]
                   }).then((candidates) => {
                     assert.equal(candidates.length, 2);
                     assert.equal(candidates[0].candidateName, 'テスト更新候補1');
