@@ -322,7 +322,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
                 }).then((candidates) => {
                   assert.equal(candidates.length, 0);
                 });
-                const p4 = Schedule.findById(scheduleId).then((schedule) => {
+                const p4 = Schedule.findByPk(scheduleId).then((schedule) => {
                   assert.equal(!schedule, true);
                 });
                 Promise.all([p1, p2, p3, p4]).then(() => {
