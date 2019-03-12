@@ -168,18 +168,13 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
           createdBy: req.user.id,
           updatedAt: updatedAt
         }).then((schedule) => {
-          Candidate.findAll({
-            where: { scheduleId: schedule.scheduleId },
-            order: [['"candidateId"', 'ASC']]
-          }).then((candidates) => {
-            // 追加されているかチェック
-            const candidateNames = parseCandidateNames(req);
-            if (candidateNames) {
-              createCandidatesAndRedirect(candidateNames, schedule.scheduleId, res);
-            } else {
-              res.redirect('/schedules/' + schedule.scheduleId);
-            }
-          });
+          // 追加されているかチェック
+          const candidateNames = parseCandidateNames(req);
+          if (candidateNames) {
+            createCandidatesAndRedirect(candidateNames, schedule.scheduleId, res);
+          } else {
+            res.redirect('/schedules/' + schedule.scheduleId);
+          }
         });
       } else if (parseInt(req.query.delete) === 1) {
         deleteScheduleAggregate(req.params.scheduleId, () => {
