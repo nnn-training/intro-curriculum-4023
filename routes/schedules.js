@@ -20,7 +20,7 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
   const updatedAt = new Date();
   Schedule.create({
     scheduleId: scheduleId,
-    scheduleName: req.body.scheduleName.slice(0, 255),
+    scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
     memo: req.body.memo,
     createdBy: req.user.id,
     updatedAt: updatedAt
@@ -163,7 +163,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
         const updatedAt = new Date();
         schedule.update({
           scheduleId: schedule.scheduleId,
-          scheduleName: req.body.scheduleName.slice(0, 255),
+          scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
           memo: req.body.memo,
           createdBy: req.user.id,
           updatedAt: updatedAt
