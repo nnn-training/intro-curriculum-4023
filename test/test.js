@@ -221,7 +221,7 @@ describe('/schedules/:scheduleId?edit=1', () => {
                   });
                   Candidate.findAll({
                     where: { scheduleId: scheduleId },
-                    order: [['"candidateId"', 'ASC']]
+                    order: [['candidateId', 'ASC']]
                   }).then((candidates) => {
                     assert.equal(candidates.length, 2);
                     assert.equal(candidates[0].candidateName, 'テスト更新候補1');
