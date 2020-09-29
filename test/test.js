@@ -126,8 +126,8 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
                     Availability.findAll({
                       where: { scheduleId: scheduleId }
                     }).then((availabilities) => {
-                      assert.equal(availabilities.length, 1);
-                      assert.equal(availabilities[0].availability, 2);
+                      assert.strictEqual(availabilities.length, 1);
+                      assert.strictEqual(availabilities[0].availability, 2);
                       deleteScheduleAggregate(scheduleId, done, err);
                     });
                   });
@@ -172,8 +172,8 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
                   Comment.findAll({
                     where: { scheduleId: scheduleId }
                   }).then((comments) => {
-                    assert.equal(comments.length, 1);
-                    assert.equal(comments[0].comment, 'testcomment');
+                    assert.strictEqual(comments.length, 1);
+                    assert.strictEqual(comments[0].comment, 'testcomment');
                     deleteScheduleAggregate(scheduleId, done, err);
                   });
                 });
@@ -216,16 +216,16 @@ describe('/schedules/:scheduleId?edit=1', () => {
                 .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2', _csrf: csrf })
                 .end((err, res) => {
                   Schedule.findByPk(scheduleId).then((s) => {
-                    assert.equal(s.scheduleName, 'テスト更新予定2');
-                    assert.equal(s.memo, 'テスト更新メモ2');
+                    assert.strictEqual(s.scheduleName, 'テスト更新予定2');
+                    assert.strictEqual(s.memo, 'テスト更新メモ2');
                   });
                   Candidate.findAll({
                     where: { scheduleId: scheduleId },
                     order: [['candidateId', 'ASC']]
                   }).then((candidates) => {
-                    assert.equal(candidates.length, 2);
-                    assert.equal(candidates[0].candidateName, 'テスト更新候補1');
-                    assert.equal(candidates[1].candidateName, 'テスト更新候補2');
+                    assert.strictEqual(candidates.length, 2);
+                    assert.strictEqual(candidates[0].candidateName, 'テスト更新候補1');
+                    assert.strictEqual(candidates[1].candidateName, 'テスト更新候補2');
                     deleteScheduleAggregate(scheduleId, done, err);
                   });
                 });
@@ -310,20 +310,20 @@ describe('/schedules/:scheduleId?delete=1', () => {
                 const p1 = Comment.findAll({
                   where: { scheduleId: scheduleId }
                 }).then((comments) => {
-                  assert.equal(comments.length, 0);
+                  assert.strictEqual(comments.length, 0);
                 });
                 const p2 = Availability.findAll({
                   where: { scheduleId: scheduleId }
                 }).then((availabilities) => {
-                  assert.equal(availabilities.length, 0);
+                  assert.strictEqual(availabilities.length, 0);
                 });
                 const p3 = Candidate.findAll({
                   where: { scheduleId: scheduleId }
                 }).then((candidates) => {
-                  assert.equal(candidates.length, 0);
+                  assert.strictEqual(candidates.length, 0);
                 });
                 const p4 = Schedule.findByPk(scheduleId).then((schedule) => {
-                  assert.equal(!schedule, true);
+                  assert.strictEqual(!schedule, true);
                 });
                 Promise.all([p1, p2, p3, p4]).then(() => {
                   if (err) return done(err);
