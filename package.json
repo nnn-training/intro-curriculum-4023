@@ -7,36 +7,33 @@
     "test": "npx jest --testTimeout=10000 --forceExit"
   },
   "dependencies": {
-    "bootstrap": "^4.0.0",
+    "bootstrap": "4.0.0",
     "cookie-parser": "~1.4.3",
-    "csurf": "^1.8.3",
     "debug": "~2.6.9",
     "express": "~4.16.0",
-    "express-session": "^1.15.6",
-    "helmet": "^3.8.2",
+    "express-session": "1.13.0",
+    "helmet": "3.8.2",
     "http-errors": "~1.6.2",
-    "jquery": "^3.4.1",
+    "jquery": "3.4.1",
+    "moment-timezone": "0.5.0",
     "morgan": "~1.9.0",
-    "uuid": "^3.3.2",
-    "passport": "^0.3.2",
-    "passport-github2": "^0.1.9",
-    "pg": "^7.17.1",
-    "pg-hstore": "^2.3.3",
+    "passport": "0.3.2",
+    "passport-github2": "0.1.9",
+    "pg": "8.5.1",
+    "pg-hstore": "2.3.3",
     "popper.js": "^1.14.0",
     "pug": "2.0.0-beta11",
-    "sequelize": "^5.21.5"
+    "sequelize": "6.5.0",
+    "uuid": "3.3.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.1.6",
-    "babel-loader": "^8.0.4",
-    "@babel/preset-env": "^7.1.6",
+    "@babel/core": "7.1.6",
+    "@babel/preset-env": "7.1.6",
+    "babel-loader": "8.0.4",
     "jest": "25.1.0",
-    "passport-stub": "^1.1.1",
-    "supertest": "^3.1.0",
-    "webpack": "^4.26.1",
-    "webpack-cli": "^3.1.2"
-  },
-  "engines": {
-    "node": "~10"
+    "passport-stub": "1.1.1",
+    "supertest": "3.1.0",
+    "webpack": "4.26.1",
+    "webpack-cli": "3.1.2"
   }
 }

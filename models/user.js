@@ -1,20 +1,23 @@
 'use strict';
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+const {sequelize, DataTypes} = require('./sequelize-loader');
 
-const User = loader.database.define('users', {
-  userId: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    allowNull: false
+const User = sequelize.define(
+  'users',
+  {
+    userId: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      allowNull: false
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false
+    }
   },
-  username: {
-    type: Sequelize.STRING,
-    allowNull: false
-  }
-}, {
+   {
     freezeTableName: true,
     timestamps: false
-  });
+  }
+);
 
 module.exports = User;
