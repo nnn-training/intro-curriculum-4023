@@ -1,30 +1,32 @@
 'use strict';
-const loader = require('./sequelize-loader');
-const Sequelize = loader.Sequelize;
+const { sequelize, DataTypes } = require('./sequelize-loader');
 
-const Schedule = loader.database.define('schedules', {
-  scheduleId: {
-    type: Sequelize.UUID,
-    primaryKey: true,
-    allowNull: false
+const Schedule = sequelize.define(
+  'schedules',
+  {
+    scheduleId: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      allowNull: false
+    },
+    scheduleName: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    memo: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    },
+    createdBy: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    }
   },
-  scheduleName: {
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  memo: {
-    type: Sequelize.TEXT,
-    allowNull: false
-  },
-  createdBy: {
-    type: Sequelize.INTEGER,
-    allowNull: false
-  },
-  updatedAt: {
-    type: Sequelize.DATE,
-    allowNull: false
-  }
-}, {
+  {
     freezeTableName: true,
     timestamps: false,
     indexes: [
@@ -32,6 +34,7 @@ const Schedule = loader.database.define('schedules', {
         fields: ['createdBy']
       }
     ]
-  });
+  }
+);
 
 module.exports = Schedule;
