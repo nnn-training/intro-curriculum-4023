@@ -12,7 +12,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-session": "1.13.0",
-    "helmet": "3.8.2",
+    "helmet": "^4.6.0",
     "http-errors": "~1.6.2",
     "jquery": "3.4.1",
     "moment-timezone": "0.5.0",
