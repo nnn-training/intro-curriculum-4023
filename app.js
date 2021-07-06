@@ -97,8 +97,7 @@ app.get('/auth/github/callback',
     var loginFrom = req.cookies.loginFrom;
     // オープンリダイレクタ脆弱性対策
     if (loginFrom &&
-      !loginFrom.includes('http://') &&
-      !loginFrom.includes('https://')) {
+      loginFrom.startsWith('/')) {
       res.clearCookie('loginFrom');
       res.redirect(loginFrom);
     } else {
