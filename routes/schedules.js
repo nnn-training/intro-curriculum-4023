@@ -177,7 +177,9 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
           }
         });
       } else if (parseInt(req.query.delete) === 1) {
-        deleteScheduleAggregate(req.params.scheduleId, () => {
+      }if
+        (window.confirm('本当によろしいですか?')) {
+         deleteScheduleAggregate(req.params.scheduleId, () => {
           res.redirect('/');
         });
       } else {

@@ -2,8 +2,14 @@ extends layout
 
 block content
   div.jumbotron.my-3
-    h1.display-4 予定調整くん
-    p.lead 予定調整くんは、GitHubで認証でき、予定を作って出欠が取れるサービスです
+  h1.display-4 予定調整くん
+  p.lead 予定調整くんは、Githubで認証でき、予定を作って出欠がとれるサービスです
+    if user
+      div
+        a(href="/logout").btn.btn-outline-secondary.btn-lg.my-3 #{user.username} をログアウト
+    else
+      div
+        a(href="/login").btn.btn-outline-success.btn-lg.my-3 ログイン
   if user
     div
       a(href="/schedules/new").btn.btn-info 予定を作る
@@ -16,6 +22,6 @@ block content
           th 更新日時
         each schedule in schedules
           tr
-            td
-              a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
-            td #{schedule.formattedUpdatedAt}
+          td
+            a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
+          td #{schedule.updatedAt}

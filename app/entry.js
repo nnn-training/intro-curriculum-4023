@@ -38,3 +38,11 @@ buttonSelfComment.click(() => {
       });
   }
 });
+
+const buttonConfirm = $('#confirm-button');
+buttonConfirm.click(function(){
+  if(!confirm('削除してよろしいですか?')){
+    return false;
+  }else{
+  }
+});
