@@ -29,6 +29,10 @@ var GitHubStrategy = require('passport-github2').Strategy;
 var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '2f831cb3d4aac02393aa';
 var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '9fbc340ac0175123695d2dedfbdf5a78df3b8067';
 
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+var GOOGLE_CLIENT_ID = '942773391442-k8tck3aaiod4saatljslg1b2n7ageqaq.apps.googleusercontent.com';
+var GOOGLE_CLIENT_SECRET = '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';
+
 passport.serializeUser(function (user, done) {
   done(null, user);
 });
@@ -48,6 +52,23 @@ passport.use(new GitHubStrategy({
       User.upsert({
         userId: profile.id,
         username: profile.username
+      }).then(() => {
+        done(null, profile);
+      });
+    });
+  }
+));
+
+passport.use(new GoogleStrategy({
+  clientID: GOOGLE_CLIENT_ID,
+  clientSecret: GOOGLE_CLIENT_SECRET,
+  callbackURL: 'http://localhost:8000/auth/google/callback'
+},
+  function (accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+      User.upsert({
+        userId: profile.id,
+        username: profile.displayName
       }).then(() => {
         done(null, profile);
       });
@@ -87,7 +108,7 @@ app.use('/schedules', availabilitiesRouter);
 app.use('/schedules', commentsRouter);
 
 app.get('/auth/github',
-  passport.authenticate('github', { scope: ['user:email'] }),
+  passport.authenticate('github', { scope: ['user:email',  ] }),
   function (req, res) {
   });
 
@@ -104,6 +125,29 @@ app.get('/auth/github/callback',
       res.redirect('/');
     }
   });
+
+  app.get('/auth/google',
+  passport.authenticate('google', {scope: [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile'
+  ]}),
+  function(req, res){}
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', {failureRedirect: '/login'}),
+  function (req, res) {
+    var loginFrom = req.cookies.loginFrom;
+    // オープンリダイレクタ脆弱性対策
+    if (loginFrom &&
+      loginFrom.startsWith('/')) {
+      res.clearCookie('loginFrom');
+      res.redirect(loginFrom);
+    } else {
+      res.redirect('/');
+    }
+  }
+);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

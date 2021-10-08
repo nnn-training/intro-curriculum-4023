@@ -8,7 +8,7 @@ block content
       p(style="white-space:pre;") #{schedule.memo}
     div.card-footer
       p 作成者: #{schedule.user.username}
-  - var isMine = parseInt(user.id) === schedule.user.userId
+  - var isMine = user.id === schedule.user.userId
   if isMine
     div
       a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info この予定を編集する

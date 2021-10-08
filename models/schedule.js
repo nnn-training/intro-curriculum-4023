@@ -18,7 +18,7 @@ const Schedule = sequelize.define(
       allowNull: false
     },
     createdBy: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false
     },
     updatedAt: {
