@@ -10,7 +10,7 @@ const Availability = sequelize.define(
       allowNull: false
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false
     },

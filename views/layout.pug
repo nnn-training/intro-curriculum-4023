@@ -16,7 +16,8 @@ html
       ul.navbar-nav
         if user
           li.nav-item
-            a(href="/logout").nav-link #{user.username} をログアウト
+          - var username = user.username || user.displayName
+            a(href="/logout").nav-link #{username} をログアウト
         else
           li.nav-item
             a(href="/login").nav-link ログイン

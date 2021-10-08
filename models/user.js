@@ -5,12 +5,12 @@ const User = sequelize.define(
   'users',
   {
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false
     },
     username: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, //グーグルアカウントのidは桁が大きいためstring型に変更
       allowNull: false
     }
   },
