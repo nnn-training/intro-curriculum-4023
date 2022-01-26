@@ -2,7 +2,12 @@
 const express = require('express');
 const router = express.Router();
 const Schedule = require('../models/schedule');
-const moment = require('moment-timezone');
+
+const dayjs = require('dayjs');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
@@ -15,7 +20,7 @@ router.get('/', (req, res, next) => {
       order: [['updatedAt', 'DESC']]
     }).then((schedules) => {
       schedules.forEach((schedule) => {
-        schedule.formattedUpdatedAt = moment(schedule.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
+        schedule.formattedUpdatedAt = dayjs(schedule.updatedAt).tz('Asia/Tokyo').format('YYYY/MM/DD HH:mm');
       });
       res.render('index', {
         title: title,
