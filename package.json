@@ -22,8 +22,8 @@
     "passport-github2": "0.1.9",
     "pg": "8.5.1",
     "pg-hstore": "2.3.3",
+    "pug": "3.0.2",
     "@popperjs/core": "2.11.2",
-    "pug": "2.0.0-beta11",
     "sequelize": "6.5.0",
     "uuid": "3.3.2"
   },
