@@ -5,7 +5,7 @@ import bootstrap from 'bootstrap';
 
 $('.availability-toggle-button').each((i, e) => {
   const button = $(e);
-  button.click(() => {
+    button.on('click', () => {
     const scheduleId = button.data('schedule-id');
     const userId = button.data('user-id');
     const candidateId = button.data('candidate-id');
