@@ -2,18 +2,18 @@ extends layout
 
 block content
   div.jumbotron.my-3
-    h1.display-4 予定調整くん
-    p.lead 予定調整くんは、GitHubで認証でき、予定を作って出欠が取れるサービスです
+    h1.display-4 Mr. SCHEDULE ADJUSTMENT
+    p.lead Mr. SCHEDULE ADJUSTMENT is a service that allows you to authenticate with GitHub, make schedules, and take attendance.
   if user
     div
-      a(href="/schedules/new").btn.btn-info 予定を作る
+      a(href="/schedules/new").btn.btn-info Make an appointment
     - var hasSchedule = schedules.length > 0
     if hasSchedule
-      h3.my-3 あなたの作った予定一覧
+      h3.my-3 List of schedules you made
       table.table
         tr
-          th 予定名
-          th 更新日時
+          th Schedule name
+          th Update date and time
         each schedule in schedules
           tr
             td

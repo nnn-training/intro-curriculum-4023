@@ -20,7 +20,7 @@ router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
   const updatedAt = new Date();
   Schedule.create({
     scheduleId: scheduleId,
-    scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
+    scheduleName: req.body.scheduleName.slice(0, 255) || '（Untitled）',
     memo: req.body.memo,
     createdBy: req.user.id,
     updatedAt: updatedAt
@@ -50,7 +50,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         order: [['candidateId', 'ASC']]
       });
     } else {
-      const err = new Error('指定された予定は見つかりません');
+      const err = new Error('No scheduled appointment found');
       err.status = 404;
       next(err);
     }
@@ -141,7 +141,7 @@ router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res
         });
       });
     } else {
-      const err = new Error('指定された予定がない、または、予定する権限がありません');
+      const err = new Error('There is no specified appointment or you do not have permission to schedule');
       err.status = 404;
       next(err);
     }
@@ -163,7 +163,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
         const updatedAt = new Date();
         schedule.update({
           scheduleId: schedule.scheduleId,
-          scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
+          scheduleName: req.body.scheduleName.slice(0, 255) || '（Untitled）',
           memo: req.body.memo,
           createdBy: req.user.id,
           updatedAt: updatedAt
@@ -181,12 +181,12 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
           res.redirect('/');
         });
       } else {
-        const err = new Error('不正なリクエストです');
+        const err = new Error('Invalid request');
         err.status = 400;
         next(err);
       }
     } else {
-      const err = new Error('指定された予定がない、または、編集する権限がありません');
+      const err = new Error('No appointment specified or you do not have permission to edit');
       err.status = 404;
       next(err);
     }

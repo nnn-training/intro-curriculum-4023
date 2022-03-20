@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title 予定調整くん
+    title Mr. SCHEDULE ADJUSTMENT
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible" content="IE=edge")
     meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -12,14 +12,14 @@ html
   body
     nav.navbar.navbar-light.bg-light
       div.navbar-header
-        a(href="/").navbar-brand.nav-link 予定調整くん
+        a(href="/").navbar-brand.nav-link Mr. SCHEDULE ADJUSTMENT
       ul.navbar-nav
         if user
           li.nav-item
-            a(href="/logout").nav-link #{user.username} をログアウト
+            a(href="/logout").nav-link #{user.username} Log out
         else
           li.nav-item
-            a(href="/login").nav-link ログイン
+            a(href="/login").nav-link Log in
     div.container
       block content
     script(src="/javascripts/bundle.js")

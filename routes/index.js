@@ -11,7 +11,7 @@ dayjs.extend(timezone);
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
-  const title = '予定調整くん';
+  const title = 'Mr. SCHEDULE ADJUSTMENT';
   if (req.user) {
     Schedule.findAll({
       where: {

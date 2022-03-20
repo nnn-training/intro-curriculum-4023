@@ -4,12 +4,12 @@ block content
   form(method="post", action="/schedules").my-3
     input(type="hidden" name="_csrf" value!=csrfToken)
     div.form-group
-      label(for="scheduleName") 予定名
+      label(for="scheduleName") Schedule name
       input(type="text" name="scheduleName")#scheduleName.form-control
     div.form-group
-      label(for="memo") メモ
+      label(for="memo") Memo
       textarea(name="memo")#memo.form-control
     div.form-group
-      label(for="candidates") 候補日程 (改行して複数入力してください)
+      label(for="candidates") Candidate schedule (Please enter multiple line breaks)
       textarea(name="candidates" rows="4")#candidates.form-control
-    button(type="submit").btn.btn-info 予定をつくる
+    button(type="submit").btn.btn-info Make an appointment
