@@ -28,7 +28,7 @@ block content
         th #{candidate.candidateName}
         each user in users
           - var availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-          - var availabilityLabels = ['OK', '？', 'NO'];
+          - var availabilityLabels = ['NO', '？', 'OK'];
           - var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
           td
             if user.isSelf
