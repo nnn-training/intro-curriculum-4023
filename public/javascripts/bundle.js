@@ -111,7 +111,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.availability-toggle-button').eac
       availability: nextAvailability
     }, function (data) {
       button.data('availability', data.availability);
-      var availabilityLabels = ['欠', '？', '出'];
+      var availabilityLabels = ['NO', '？', 'OK'];
       button.text(availabilityLabels[data.availability]);
       var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
       button.removeClass('btn-danger btn-secondary btn-success');
@@ -123,7 +123,7 @@ var buttonSelfComment = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#self-com
 buttonSelfComment.click(function () {
   var scheduleId = buttonSelfComment.data('schedule-id');
   var userId = buttonSelfComment.data('user-id');
-  var comment = prompt('コメントを255文字以内で入力してください。');
+  var comment = prompt('Please enter a comment within 255 characters.');
 
   if (comment) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/schedules/".concat(scheduleId, "/users/").concat(userId, "/comments"), {

@@ -1,6 +1,6 @@
 {
   "name": "schedule-arranger",
-  "description": "予定調整くん",
+  "description": "Mr. SCHEDULE ADJUSTMENT",
   "logo": "",
   "keywords": ["node"],
   "image": "heroku/nodejs"

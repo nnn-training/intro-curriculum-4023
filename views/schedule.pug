@@ -7,15 +7,20 @@ block content
     div.card-body
       p(style="white-space:pre;") #{schedule.memo}
     div.card-footer
-      p 作成者: #{schedule.user.username}
+      p Author: #{schedule.user.username}
+  div.form-group
+    label(for="shareURL") For sharing URL:
+    - var herokuURL = process.env.HEROKU_URL ? process.env.HEROKU_URL : 'http://localhost:8000/'
+    input(type="text" value=`${herokuURL}schedules/${schedule.scheduleId}/`)#shareURL.form-control
+
   - var isMine = parseInt(user.id) === schedule.user.userId
   if isMine
     div
-      a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info この予定を編集する
-  h3.my-3 出欠表
+      a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info Edit this appointment
+  h3.my-3 Attendance table
   table.table.table-bordered
     tr
-      th 予定
+      th Schedule
       each user in users
         th #{user.username}
     each candidate in candidates
@@ -23,7 +28,7 @@ block content
         th #{candidate.candidateName}
         each user in users
           - var availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-          - var availabilityLabels = ['欠', '？', '出'];
+          - var availabilityLabels = ['NO', '？', 'OK'];
           - var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
           td
             if user.isSelf
@@ -35,7 +40,7 @@ block content
             else
               h3 #{availabilityLabels[availability]}
     tr
-      th コメント
+      th comment
       each user in users
         if user.isSelf
           td
@@ -43,7 +48,7 @@ block content
               small#self-comment #{commentMap.get(user.userId)}
             button(
               data-schedule-id=schedule.scheduleId
-              data-user-id=user.userId)#self-comment-button.btn.btn-info 編集
+              data-user-id=user.userId)#self-comment-button.btn.btn-info edit
         else
           td
             p
