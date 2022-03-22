@@ -8,19 +8,22 @@ const Candidate = require('../models/candidate');
 const User = require('../models/user');
 const Availability = require('../models/availability');
 const Comment = require('../models/comment');
+//csurfモジュールを読み込む
 const csrf = require('csurf');
+//CSRF対策のためのミドルウェアを作成(cookieもしくはsessionを利用する。今回はcookie)
 const csrfProtection = csrf({ cookie: true });
 
-router.get('/new', authenticationEnsurer, csrfProtection, (req, res, next) => {
+//以下を書き換え。/schedules/newにリクエストがあった時(新しく予定を作成する画面)、csurfでcookieを有効にし,リクエストがあればcookieにcsrfトークンを割り当てる
+router.get('/new', authenticationEnsurer, csrfProtection,(req, res, next) => {
   res.render('new', { user: req.user, csrfToken: req.csrfToken() });
 });
-
+// /schedulesにPOSTリクエストがあった時には、csrfProtection関数からトークンを読み取りチェック
 router.post('/', authenticationEnsurer, csrfProtection, (req, res, next) => {
   const scheduleId = uuid.v4();
   const updatedAt = new Date();
   Schedule.create({
     scheduleId: scheduleId,
-    scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
+    scheduleName: req.body.scheduleName.slice(0, 255) || '（未定）',
     memo: req.body.memo,
     createdBy: req.user.id,
     updatedAt: updatedAt
@@ -50,7 +53,7 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
         order: [['candidateId', 'ASC']]
       });
     } else {
-      const err = new Error('指定された予定は見つかりません');
+      const err = new Error('予定が見つかりません');
       err.status = 404;
       next(err);
     }
@@ -122,7 +125,8 @@ router.get('/:scheduleId', authenticationEnsurer, (req, res, next) => {
   });
 });
 
-router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res, next) => {
+//以下、予定編集画面の認証時にcsrfProtection関数でトークンをチェックする実装を追加
+router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection,(req, res, next) => {
   Schedule.findOne({
     where: {
       scheduleId: req.params.scheduleId
@@ -137,11 +141,12 @@ router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res
           user: req.user,
           schedule: schedule,
           candidates: candidates,
+          //pugにトークンオブジェクトを渡す
           csrfToken: req.csrfToken()
         });
       });
     } else {
-      const err = new Error('指定された予定がない、または、予定する権限がありません');
+      const err = new Error('その予定がない、もしくは閲覧する権限がありません');
       err.status = 404;
       next(err);
     }
@@ -151,7 +156,7 @@ router.get('/:scheduleId/edit', authenticationEnsurer, csrfProtection, (req, res
 function isMine(req, schedule) {
   return schedule && parseInt(schedule.createdBy) === parseInt(req.user.id);
 }
-
+//以下、予定表示画面の認証時にcsrfProtection関数でトークンをチェックする実装を追加
 router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, next) => {
   Schedule.findOne({
     where: {
@@ -163,7 +168,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
         const updatedAt = new Date();
         schedule.update({
           scheduleId: schedule.scheduleId,
-          scheduleName: req.body.scheduleName.slice(0, 255) || '（名称未設定）',
+          scheduleName: req.body.scheduleName.slice(0, 255) || '（未定）',
           memo: req.body.memo,
           createdBy: req.user.id,
           updatedAt: updatedAt
@@ -186,7 +191,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, (req, res, ne
         next(err);
       }
     } else {
-      const err = new Error('指定された予定がない、または、編集する権限がありません');
+      const err = new Error('その予定がない、もしくは編集する権限がありません');
       err.status = 404;
       next(err);
     }

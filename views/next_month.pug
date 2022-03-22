@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h5.my-5 来月の晩ごはん 🍲
+      table.table.table-borderd.mt-3
+        tr.table-danger
+          th Date 📅  Link 🔗
+          th Menu 🍴
+        each schedule in schedules
+          tr
+            td
+              a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
+            td #{schedule.memo}

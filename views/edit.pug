@@ -1,25 +1,39 @@
 extends layout
 
 block content
-  h3.my-3 予定の編集
+  h3.my-3 予定の変更 📝
   form(method="post", action=`/schedules/${schedule.scheduleId}?edit=1`)
-    input(type="hidden" name="_csrf" value!=csrfToken)
+    //- POST(予定編集)の時に、_csrfというキーで、POSTで送信時に見えないようトークンを仕込む。routes/schedules/jsでトークンが生成されても、テンプレートで渡す処理をしなければチェックで弾かれ投稿できない。
+    input(type="hidden", name="_csrf" value!=csrfToken)
     div.form-group
-      label(for="scheduleName") 予定名
+      label(for="scheduleName") Date 📅　（記入例：○月○日）
       input(type="text" name="scheduleName" value=schedule.scheduleName)#scheduleName.form-control
     div.form-group
-      label(for="memo") メモ
+      label(for="memo") Menu 🍴
       textarea(name="memo")#memo.form-control #{schedule.memo}
     div.form-group
-      label 既存の日程候補
+      label Time ⏰
       ul.list-group
         each candidate in candidates
           li.list-group-item #{candidate.candidateName}
-      label(for="candidates").my-2 候補日程の追加 (改行して複数入力してください)
+      label(for="candidates").my-2 Add Time ⏰　(時間は追加のみ可)
       textarea(name="candidates")#candidates.form-control
     div
-      button(type="submit").btn.btn-info 以上の内容で予定を編集する
-  h3.my-3 危険な変更
+      button(type="submit").btn.btn-outline-info 予定を変更
+  //- 削除時にもトークンをPOSTするように設定
   form(method="post", action=`/schedules/${schedule.scheduleId}?delete=1`)
-    input(type="hidden" name="_csrf" value!=csrfToken)
-    button(type="submit").btn.btn-danger この予定を削除する
+    input(type="hidden", name="_csrf" value!=csrfToken)
+    button(type="button" data-toggle="modal" data-target="#Modal").btn.btn-danger 予定を削除
+    //- 削除ボタンを押した時にアラートを表示する設定
+    div(class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel")
+      div.modal-dialog
+        div.modal-content
+          div.modal-header.bg-warning
+            h5.modal-title#ModalLabel Warning!
+            button(type="button",data-dismiss="modal",aria-label="Close").close
+              span(aria-hidden="true")
+          div.modal-body
+            p 本当に削除しますか？
+          div.modal-footer
+            button(type="button",data-dismiss="modal").btn.btn-secondary やめる
+            button(type="submit").btn.btn-danger 削除

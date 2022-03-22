@@ -2,14 +2,15 @@ extends layout
 
 block content
   form(method="post", action="/schedules").my-3
-    input(type="hidden" name="_csrf" value!=csrfToken)
+    //-以下予定作成時にPOSTで送信時に値が見えないようトークンを仕込む
+    input(type="hidden", name="_csrf" value!=csrfToken)
     div.form-group
-      label(for="scheduleName") 予定名
+      label(for="scheduleName") Date 📅（記入例：○月○日）
       input(type="text" name="scheduleName")#scheduleName.form-control
     div.form-group
-      label(for="memo") メモ
+      label(for="memo") Menu 🍴
       textarea(name="memo")#memo.form-control
     div.form-group
-      label(for="candidates") 候補日程 (改行して複数入力してください)
+      label(for="candidates") Time ⏰　(複数の場合は改行して入力)
       textarea(name="candidates" rows="4")#candidates.form-control
-    button(type="submit").btn.btn-info 予定をつくる
+    button(type="submit").btn.btn-outline-warning 予定を作成
