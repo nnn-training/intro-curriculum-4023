@@ -106,15 +106,15 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.availability-toggle-button').eac
     var userId = button.data('user-id');
     var candidateId = button.data('candidate-id');
     var availability = parseInt(button.data('availability'));
-    var nextAvailability = (availability + 1) % 3;
+    var nextAvailability = (availability + 1) % 4;
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/schedules/".concat(scheduleId, "/users/").concat(userId, "/candidates/").concat(candidateId), {
       availability: nextAvailability
     }, function (data) {
       button.data('availability', data.availability);
-      var availabilityLabels = ['欠', '？', '出'];
+      var availabilityLabels = ['欠', '？', '出', '行けたらいく'];
       button.text(availabilityLabels[data.availability]);
-      var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
-      button.removeClass('btn-danger btn-secondary btn-success');
+      var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success', 'btn-warning'];
+      button.removeClass('btn-danger btn-secondary btn-success btn-warning');
       button.addClass(buttonStyles[data.availability]);
     });
   });
