@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title 予定調整くん
+    title 晩ごはん🍚 食べる？
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible" content="IE=edge")
     meta(name="viewport" content="width=device-width, initial-scale=1")
@@ -10,11 +10,16 @@ html
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm",
     crossorigin="anonymous")
   body
-    nav.navbar.navbar-light.bg-light
+    nav.navbar.navbar-dark.bg-warning
       div.navbar-header
-        a(href="/").navbar-brand.nav-link 予定調整くん
+        a(href="/").navbar-brand.nav-link 晩ごはん🍚 食べる？
       ul.navbar-nav
         if user
+          li.nav-item.dropdown 
+            a(role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false").nav-link.dropdown-toggle#navbarDropdownMenuLink 予定一覧
+            div.dropdown-menu(aria-labelledby="navbarDropdownMenuLink")
+              a(href="/this_month").dropdown-item 今月の晩ごはん 
+              a(href="/next_month").dropdown-item 来月の晩ごはん
           li.nav-item
             a(href="/logout").nav-link #{user.username} をログアウト
         else

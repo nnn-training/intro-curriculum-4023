@@ -1,21 +1,27 @@
 extends layout
 
 block content
-  div.card.my-3
+  div.card.my-3.border-danger
     div.card-header
-      h4 #{schedule.scheduleName}
+      h4 Date 📅 ： #{schedule.scheduleName}
     div.card-body
-      p(style="white-space:pre;") #{schedule.memo}
+      p(style="white-space:pre;") Menu 🍴 ： #{schedule.memo}
     div.card-footer
-      p 作成者: #{schedule.user.username}
+      p 担当 👩🏻‍🍳 ： #{schedule.user.username}
+    //- 予定表示ページに共有URLを表示するエリアを作成。Herokuの環境変数を設定していればそちらを利用し、なければlocalhostのパスを利用
+  .form-group 
+    label(for="shareURL") URL 🔗
+    - var herokuURL = process.env.HEROKU_URL ? process.env.HEROKU_URL : 'http://localhost:8000'
+    input(type="text" value=`${herokuURL}schedules/${schedule.scheduleId}/`)#shareURL.form-control
+
   - var isMine = parseInt(user.id) === schedule.user.userId
   if isMine
     div
-      a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info この予定を編集する
-  h3.my-3 出欠表
+      a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-outline-info 予定を編集
+  h3.my-3 Time ⏰
   table.table.table-bordered
-    tr
-      th 予定
+    tr.table-danger
+      th 記入者
       each user in users
         th #{user.username}
     each candidate in candidates
@@ -23,7 +29,7 @@ block content
         th #{candidate.candidateName}
         each user in users
           - var availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-          - var availabilityLabels = ['欠', '？', '出'];
+          - var availabilityLabels = ['無理', '微妙', 'OK !'];
           - var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
           td
             if user.isSelf
@@ -34,16 +40,17 @@ block content
                 data-availability=availability) #{availabilityLabels[availability]}
             else
               h3 #{availabilityLabels[availability]}
-    tr
-      th コメント
+    tr.table-secondary
+      th Comment ✏️
       each user in users
         if user.isSelf
           td
             p
-              small#self-comment #{commentMap.get(user.userId)}
-            button(
-              data-schedule-id=schedule.scheduleId
-              data-user-id=user.userId)#self-comment-button.btn.btn-info 編集
+              #self-comment #{commentMap.get(user.userId)}
+              div.text-right
+                button(
+                  data-schedule-id=schedule.scheduleId
+                  data-user-id=user.userId)#self-comment-button.btn.btn-outline-info.btn-lg 編集
         else
           td
             p

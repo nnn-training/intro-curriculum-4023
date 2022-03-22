@@ -111,7 +111,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.availability-toggle-button').eac
       availability: nextAvailability
     }, function (data) {
       button.data('availability', data.availability);
-      var availabilityLabels = ['欠', '？', '出'];
+      var availabilityLabels = ['無理', '微妙', 'OK !'];
       button.text(availabilityLabels[data.availability]);
       var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
       button.removeClass('btn-danger btn-secondary btn-success');
@@ -122,8 +122,9 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()('.availability-toggle-button').eac
 var buttonSelfComment = jquery__WEBPACK_IMPORTED_MODULE_0___default()('#self-comment-button');
 buttonSelfComment.click(function () {
   var scheduleId = buttonSelfComment.data('schedule-id');
-  var userId = buttonSelfComment.data('user-id');
-  var comment = prompt('コメントを255文字以内で入力してください。');
+  var userId = buttonSelfComment.data('user-id'); //編集画面でコメントを入力する時に出るメッセージ
+
+  var comment = prompt('リクエストやメッセージがあれば、255字以内で記入してね!');
 
   if (comment) {
     jquery__WEBPACK_IMPORTED_MODULE_0___default.a.post("/schedules/".concat(scheduleId, "/users/").concat(userId, "/comments"), {
