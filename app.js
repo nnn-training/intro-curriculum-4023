@@ -12,16 +12,15 @@ var Schedule = require('./models/schedule');
 var Availability = require('./models/availability');
 var Candidate = require('./models/candidate');
 var Comment = require('./models/comment');
-User.sync().then(() => {
-  Schedule.belongsTo(User, { foreignKey: 'createdBy' });
+User.sync().then(async () => {
+  Schedule.belongsTo(User, {foreignKey: 'createdBy'});
   Schedule.sync();
-  Comment.belongsTo(User, { foreignKey: 'userId' });
+  Comment.belongsTo(User, {foreignKey: 'userId'});
   Comment.sync();
-  Availability.belongsTo(User, { foreignKey: 'userId' });
-  Candidate.sync().then(() => {
-    Availability.belongsTo(Candidate, { foreignKey: 'candidateId' });
-    Availability.sync();
-  });
+  Availability.belongsTo(User, {foreignKey: 'userId'});
+  await Candidate.sync()
+  Availability.belongsTo(Candidate, {foreignKey: 'candidateId'});
+  Availability.sync();
 });
 
 
@@ -44,13 +43,12 @@ passport.use(new GitHubStrategy({
   callbackURL: process.env.HEROKU_URL ? process.env.HEROKU_URL + 'auth/github/callback' : 'http://localhost:8000/auth/github/callback'
 },
   function (accessToken, refreshToken, profile, done) {
-    process.nextTick(function () {
-      User.upsert({
+    process.nextTick(async function () {
+      await User.upsert({
         userId: profile.id,
         username: profile.username
-      }).then(() => {
-        done(null, profile);
       });
+      done(null, profile);
     });
   }
 ));
@@ -89,7 +87,7 @@ app.use('/schedules', commentsRouter);
 app.get('/auth/github',
   passport.authenticate('github', { scope: ['user:email'] }),
   function (req, res) {
-  });
+});
 
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
