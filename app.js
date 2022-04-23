@@ -3,15 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var helmet = require('helmet');
-var session = require('express-session');
-var passport = require('passport');
+const helmet = require('helmet');
+const session = require('express-session');
+const passport = require('passport');
 // モデルの読み込み
-var User = require('./models/user');
-var Schedule = require('./models/schedule');
-var Availability = require('./models/availability');
-var Candidate = require('./models/candidate');
-var Comment = require('./models/comment');
+const User = require('./models/user');
+const Schedule = require('./models/schedule');
+const Availability = require('./models/availability');
+const Candidate = require('./models/candidate');
+const Comment = require('./models/comment');
 User.sync().then(async () => {
   Schedule.belongsTo(User, {foreignKey: 'createdBy'});
   Schedule.sync();
@@ -24,9 +24,9 @@ User.sync().then(async () => {
 });
 
 
-var GitHubStrategy = require('passport-github2').Strategy;
-var GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '2f831cb3d4aac02393aa';
-var GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '9fbc340ac0175123695d2dedfbdf5a78df3b8067';
+const GitHubStrategy = require('passport-github2').Strategy;
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '2f831cb3d4aac02393aa';
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '9fbc340ac0175123695d2dedfbdf5a78df3b8067';
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -54,11 +54,11 @@ passport.use(new GitHubStrategy({
 ));
 
 var indexRouter = require('./routes/index');
-var loginRouter = require('./routes/login');
-var logoutRouter = require('./routes/logout');
-var schedulesRouter = require('./routes/schedules');
-var availabilitiesRouter = require('./routes/availabilities');
-var commentsRouter = require('./routes/comments');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
+const schedulesRouter = require('./routes/schedules');
+const availabilitiesRouter = require('./routes/availabilities');
+const commentsRouter = require('./routes/comments');
 
 var app = express();
 app.use(helmet());
@@ -92,7 +92,7 @@ app.get('/auth/github',
 app.get('/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   function (req, res) {
-    var loginFrom = req.cookies.loginFrom;
+    const loginFrom = req.cookies.loginFrom;
     // オープンリダイレクタ脆弱性対策
     if (loginFrom &&
       loginFrom.startsWith('/')) {
