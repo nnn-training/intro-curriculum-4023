@@ -85,6 +85,14 @@ router.get('/:scheduleId', authenticationEnsurer, async (req, res, next) => {
       candidates.forEach((c) => {
         const map = availabilityMapMap.get(u.userId) || new Map();
         const a = map.get(c.candidateId) || 0; // デフォルト値は 0 を利用
+        if (!map.get(c.candidateId)) { // 出欠の値がない場合、ここでデータベースに追加
+          Availability.upsert({
+            scheduleId: schedule.scheduleId,
+            userId: u.userId,
+            candidateId: c.candidateId,
+            availability: a
+          });
+        }
         map.set(c.candidateId, a);
         availabilityMapMap.set(u.userId, map);
       });
