@@ -18,7 +18,7 @@ router.get('/', async (req, res, next) => {
         createdBy: req.user.id
       },
       order: [['updatedAt', 'DESC']]
-    })
+    });
     res.render('index', {
       title: title,
       user: req.user,
