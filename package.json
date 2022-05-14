@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "npx jest --testTimeout=10000 --forceExit"
+    "test": "jest --testTimeout=10000 --forceExit"
   },
   "dependencies": {
     "bootstrap": "5.1.3",
