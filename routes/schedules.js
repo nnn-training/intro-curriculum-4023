@@ -24,7 +24,7 @@ router.post('/', authenticationEnsurer, csrfProtection, async (req, res, next) =
     memo: req.body.memo,
     createdBy: req.user.id,
     updatedAt: updatedAt
-  })
+  });
   createCandidatesAndRedirect(parseCandidateNames(req), scheduleId, res);
 });
 
