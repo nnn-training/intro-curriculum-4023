@@ -1,5 +1,5 @@
 'use strict';
-const { sequelize, DataTypes } = require('./sequelize-loader');
+const {sequelize, DataTypes} = require('./sequelize-loader');
 
 const Availability = sequelize.define(
   'availabilities',
