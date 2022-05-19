@@ -165,9 +165,8 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, async (req, r
         res.redirect('/schedules/' + schedule.scheduleId);
       }
     } else if (parseInt(req.query.delete) === 1) {
-      deleteScheduleAggregate(req.params.scheduleId, () => {
-        res.redirect('/');
-      });
+      await deleteScheduleAggregate(req.params.scheduleId);
+      res.redirect('/');
     } else {
       const err = new Error('不正なリクエストです');
       err.status = 400;
@@ -180,7 +179,7 @@ router.post('/:scheduleId', authenticationEnsurer, csrfProtection, async (req, r
   }
 });
 
-async function deleteScheduleAggregate(scheduleId, done, err) {
+async function deleteScheduleAggregate(scheduleId) {
   const comments = await Comment.findAll({
     where: { scheduleId: scheduleId }
   });
@@ -199,8 +198,6 @@ async function deleteScheduleAggregate(scheduleId, done, err) {
   await Promise.all(promisesCandidateDestroy);
   const s = await Schedule.findByPk(scheduleId);
   await s.destroy();
-  if (err) return done(err);
-  done();
 }
 
 router.deleteScheduleAggregate = deleteScheduleAggregate;
