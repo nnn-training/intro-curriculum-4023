@@ -6,6 +6,7 @@ var logger = require('morgan');
 const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
+
 // モデルの読み込み
 const User = require('./models/user');
 const Schedule = require('./models/schedule');
@@ -23,7 +24,6 @@ User.sync().then(async () => {
   Availability.sync();
 });
 
-
 const GitHubStrategy = require('passport-github2').Strategy;
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '2f831cb3d4aac02393aa';
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '9fbc340ac0175123695d2dedfbdf5a78df3b8067';
@@ -35,7 +35,6 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (obj, done) {
   done(null, obj);
 });
-
 
 passport.use(new GitHubStrategy({
   clientID: GITHUB_CLIENT_ID,
@@ -101,15 +100,15 @@ app.get('/auth/github/callback',
     } else {
       res.redirect('/');
     }
-  });
+});
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
