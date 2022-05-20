@@ -14,7 +14,7 @@ const User = sequelize.define(
       allowNull: false
     }
   },
-   {
+  {
     freezeTableName: true,
     timestamps: false
   }
