@@ -17,7 +17,7 @@ describe('/login', () => {
 
   afterAll(() => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
   });
 
   test('ログインのためのリンクが含まれる', async () => {
@@ -54,7 +54,7 @@ describe('/schedules', () => {
 
   afterAll(async () => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
     await deleteScheduleAggregate(scheduleId);
   });
 
@@ -93,7 +93,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
 
   afterAll(async () => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
     await deleteScheduleAggregate(scheduleId);
   });
 
@@ -130,7 +130,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
 
   afterAll(async () => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
     await deleteScheduleAggregate(scheduleId);
   });
 
@@ -168,7 +168,7 @@ describe('/schedules/:scheduleId?edit=1', () => {
 
   afterAll(async () => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
     await deleteScheduleAggregate(scheduleId);
   });
 
@@ -204,7 +204,7 @@ describe('/schedules/:scheduleId?delete=1', () => {
 
   afterAll(() => {
     passportStub.logout();
-    passportStub.uninstall(app);
+    passportStub.uninstall();
   });
 
   test('予定に関連する全ての情報が削除できる', async () => {
