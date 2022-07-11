@@ -14,7 +14,7 @@
     "dayjs": "1.10.4",
     "debug": "~2.6.9",
     "express": "~4.16.0",
-    "express-session": "1.13.0",
+    "express-session": "1.17.3",
     "helmet": "5.0.2",
     "http-errors": "~1.6.2",
     "jquery": "3.4.1",
