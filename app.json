@@ -3,5 +3,5 @@
   "description": "予定調整くん",
   "logo": "",
   "keywords": ["node"],
-  "image": "heroku/nodejs"
+  "image": "render/nodejs"
 }
