@@ -1,0 +1,68 @@
+Arguments: 
+  /usr/local/bin/node /opt/yarn-v1.22.18/bin/yarn.js install
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+Yarn version: 
+  1.22.18
+
+Node version: 
+  16.14.2
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: ENOENT: no such file or directory, open '/usr/local/share/.cache/yarn/v6/npm-@babel-plugin-transform-for-of-7.21.0-964108c9988de1a60b4be2354a7d7e245f36e86e-integrity/node_modules/@babel/plugin-transform-for-of/.yarn-tarball.tgz'
+
+npm manifest: 
+  {
+    "name": "schedule-arranger",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+      "start": "node ./bin/www",
+      "test": "jest --testTimeout=10000 --forceExit"
+    },
+    "dependencies": {
+      "@popperjs/core": "2.11.2",
+      "bootstrap": "5.1.3",
+      "cookie-parser": "~1.4.3",
+      "csurf": "1.11.0",
+      "dayjs": "1.10.4",
+      "debug": "~2.6.9",
+      "express": "~4.16.0",
+      "express-session": "1.17.3",
+      "helmet": "5.0.2",
+      "http-errors": "~1.6.2",
+      "jquery": "3.6.0",
+      "morgan": "~1.9.0",
+      "passport": "0.6.0",
+      "passport-github2": "0.1.12",
+      "pg": "8.5.1",
+      "pg-hstore": "2.3.3",
+      "pug": "3.0.2",
+      "sequelize": "6.5.0",
+      "uuid": "8.3.2"
+    },
+    "devDependencies": {
+      "@babel/core": "7.17.5",
+      "@babel/preset-env": "7.16.11",
+      "babel-loader": "8.2.3",
+      "jest": "27.5.1",
+      "passport-stub": "1.1.1",
+      "supertest": "6.2.2",
+      "webpack": "5.69.1",
+      "webpack-cli": "4.9.2"
+    },
+    "engines": {
+      "node": ">=16"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
