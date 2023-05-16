@@ -2,24 +2,23 @@ extends layout
 
 block content
   h3.my-3 予定の編集
-  form(method="post", action=`/schedules/${schedule.scheduleId}?edit=1`)
+  form(method="post", action=`/schedules/${schedule.scheduleId}/update`)
     input(type="hidden" name="_csrf" value!=csrfToken)
-    div.form-group
-      label(for="scheduleName") 予定名
-      input(type="text" name="scheduleName" value=schedule.scheduleName)#scheduleName.form-control
-    div.form-group
-      label(for="memo") メモ
-      textarea(name="memo")#memo.form-control #{schedule.memo}
-    div.form-group
-      label 既存の日程候補
-      ul.list-group
+    div.mb-3
+      label.form-label(for="scheduleName") 予定名
+      input#scheduleName.form-control(type="text" name="scheduleName" value=schedule.scheduleName)
+    div.mb-3
+      label.form-label(for="memo") メモ
+      textarea#memo.form-control(name="memo") #{schedule.memo}
+    div.mb-3
+      label.form-label 既存の日程候補
+      ul.list-group.mb-2
         each candidate in candidates
           li.list-group-item #{candidate.candidateName}
-      label(for="candidates").my-2 候補日程の追加 (改行して複数入力してください)
-      textarea(name="candidates")#candidates.form-control
-    div
-      button(type="submit").btn.btn-info 以上の内容で予定を編集する
+      label.form-label(for="candidates") 候補日程の追加 (改行して複数入力してください)
+      textarea#candidates.form-control(name="candidates")
+    button.btn.btn-primary(type="submit") 以上の内容で予定を編集する
   h3.my-3 危険な変更
-  form(method="post", action=`/schedules/${schedule.scheduleId}?delete=1`)
+  form(method="post", action=`/schedules/${schedule.scheduleId}/delete`)
     input(type="hidden" name="_csrf" value!=csrfToken)
-    button(type="submit").btn.btn-danger この予定を削除する
+    button.btn.btn-danger(type="submit") この予定を削除する
