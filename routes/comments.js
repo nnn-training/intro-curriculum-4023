@@ -4,7 +4,7 @@ const router = express.Router();
 const { param, body, validationResult } = require('express-validator');
 const authenticationEnsurer = require('./authentication-ensurer');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: [ 'query' ] });
 
 router.post(
   '/:scheduleId/users/:userId/comments',

@@ -4,7 +4,7 @@ const app = require('../app');
 const passportStub = require('passport-stub');
 const { deleteScheduleAggregate } = require('../routes/schedules');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: [ 'query' ] });
 
 describe('/login', () => {
   beforeAll(() => {
