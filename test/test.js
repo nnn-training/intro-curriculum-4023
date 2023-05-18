@@ -112,7 +112,7 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/candidates/${candidate.candidateId}`)
       .send({ availability: 2 }) // 出席に更新
-      .expect('{"status":"OK","availability":2}')
+      .expect('{"status":"OK","availability":2}');
     const availabilities = await Availability.findAll({
       where: { scheduleId: scheduleId }
     });
@@ -150,7 +150,7 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/comments`)
       .send({ comment: 'testcomment' })
-      .expect('{"status":"OK","comment":"testcomment"}')
+      .expect('{"status":"OK","comment":"testcomment"}');
     const comments = await Comment.findAll({
       where: { scheduleId: scheduleId }
     });
