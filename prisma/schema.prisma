@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId         Int            @id
+  username       String         @unique @db.VarChar(255)
+  availabilities Availability[]
+  schedules      Schedule[]
+  comments       Comment[]
+
+  @@map(name: "users")
+}
+
+model Schedule {
+  scheduleId   String      @id @db.Uuid
+  scheduleName String      @db.VarChar(255)
+  memo         String      @db.Text
+  createdBy    Int
+  updatedAt    DateTime    @db.Timestamptz(6)
+  user         User        @relation(fields: [createdBy], references: [userId], onDelete: Cascade)
+  candidates   Candidate[]
+  comments     Comment[]
+
+  @@index(fields: [createdBy])
+  @@map(name: "schedules")
+}
+
+model Candidate {
+  candidateId    Int            @id @default(autoincrement())
+  candidateName  String         @db.VarChar(255)
+  scheduleId     String         @db.Uuid
+  schedule       Schedule       @relation(fields: [scheduleId], references: [scheduleId], onDelete: Cascade)
+  availabilities Availability[]
+
+  @@index(fields: [scheduleId])
+  @@map(name: "candidates")
+}
+
+model Availability {
+  candidateId  Int
+  userId       Int
+  availability Int       @default(0)
+  scheduleId   String    @db.Uuid
+  candidate    Candidate @relation(fields: [candidateId], references: [candidateId], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@id(fields: [candidateId, userId], name: "availabilityCompositeId")
+  @@index(fields: [scheduleId])
+  @@map(name: "availabilities")
+}
+
+model Comment {
+  scheduleId String   @db.Uuid
+  userId     Int
+  comment    String   @db.VarChar(255)
+  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  schedule   Schedule @relation(fields: [scheduleId], references: [scheduleId], onDelete: Cascade)
+
+  @@id([scheduleId, userId], name: "commentCompositeId")
+  @@map(name: "comments")
+}

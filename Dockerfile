@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 node:16.14.2-slim
+FROM --platform=linux/x86_64 node:18.15.0-slim
 
 RUN apt-get update && \
     apt-get install -y locales git procps vim tmux curl

@@ -1,15 +1,15 @@
 extends layout
 
 block content
-  form(method="post", action="/schedules").my-3
+  form.my-3(method="post", action="/schedules")
     input(type="hidden" name="_csrf" value!=csrfToken)
-    div.form-group
-      label(for="scheduleName") 予定名
-      input(type="text" name="scheduleName")#scheduleName.form-control
-    div.form-group
-      label(for="memo") メモ
-      textarea(name="memo")#memo.form-control
-    div.form-group
-      label(for="candidates") 候補日程 (改行して複数入力してください)
-      textarea(name="candidates" rows="4")#candidates.form-control
-    button(type="submit").btn.btn-info 予定をつくる
+    div.mb-3
+      label.form-label(for="scheduleName") 予定名
+      input#scheduleName.form-control(type="text" name="scheduleName")
+    div.mb-3
+      label.form-label(for="memo") メモ
+      textarea#memo.form-control(name="memo")
+    div.mb-3
+      label.form-label(for="candidates") 候補日程 (改行して複数入力してください)
+      textarea#candidates.form-control(name="candidates" rows="4")
+    button.btn.btn-primary(type="submit") 予定をつくる

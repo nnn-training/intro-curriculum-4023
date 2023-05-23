@@ -2,16 +2,13 @@ extends layout
 
 block content
   div.card.my-3
-    div.card-header
-      h4 #{schedule.scheduleName}
+    h4.card-header #{schedule.scheduleName}
     div.card-body
-      p(style="white-space:pre;") #{schedule.memo}
-    div.card-footer
-      p 作成者: #{schedule.user.username}
-  - var isMine = parseInt(user.id) === schedule.user.userId
+      p.card-text(style="white-space: pre;") #{schedule.memo}
+    div.card-footer 作成者: #{schedule.user.username}
+  - const isMine = parseInt(user.id) === schedule.user.userId
   if isMine
-    div
-      a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-info この予定を編集する
+    a.btn.btn-primary(href=`/schedules/${schedule.scheduleId}/edit`) この予定を編集する
   h3.my-3 出欠表
   table.table.table-bordered
     tr
@@ -22,12 +19,12 @@ block content
       tr
         th #{candidate.candidateName}
         each user in users
-          - var availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-          - var availabilityLabels = ['欠', '？', '出'];
-          - var buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
+          - const availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
+          - const availabilityLabels = ['欠', '？', '出'];
+          - const buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
           td
             if user.isSelf
-              button(class=`availability-toggle-button btn-lg ${buttonStyles[availability]}`
+              button(class=`availability-toggle-button btn btn-lg ${buttonStyles[availability]}`
                 data-schedule-id=schedule.scheduleId
                 data-user-id=user.userId
                 data-candidate-id=candidate.candidateId
@@ -43,7 +40,7 @@ block content
               small#self-comment #{commentMap.get(user.userId)}
             button(
               data-schedule-id=schedule.scheduleId
-              data-user-id=user.userId)#self-comment-button.btn.btn-info 編集
+              data-user-id=user.userId)#self-comment-button.btn.btn-primary 編集
         else
           td
             p

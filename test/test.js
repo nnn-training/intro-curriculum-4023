@@ -2,12 +2,9 @@
 const request = require('supertest');
 const app = require('../app');
 const passportStub = require('passport-stub');
-const User = require('../models/user');
-const Schedule = require('../models/schedule');
-const Candidate = require('../models/candidate');
-const Availability = require('../models/availability');
-const Comment = require('../models/comment');
-const deleteScheduleAggregate = require('../routes/schedules').deleteScheduleAggregate;
+const { deleteScheduleAggregate } = require('../routes/schedules');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient({ log: [ 'query' ] });
 
 describe('/login', () => {
   beforeAll(() => {
@@ -24,11 +21,11 @@ describe('/login', () => {
     await request(app)
       .get('/login')
       .expect('Content-Type', 'text/html; charset=utf-8')
-      .expect(/<a class="btn btn-info my-3" href="\/auth\/github"/)
+      .expect(/<a class="btn btn-primary my-3" href="\/auth\/github"/)
       .expect(200);
   });
 
-  test('ログイン時はユーザー名が表示される', async () => {
+  test('ログイン時はユーザ名が表示される', async () => {
     await request(app)
       .get('/login')
       .expect(/testuser/)
@@ -59,7 +56,13 @@ describe('/schedules', () => {
   });
 
   test('予定が作成でき、表示される', async () => {
-    await User.upsert({ userId: 0, username: 'testuser' });
+    const userId = 0, username = 'testuser';
+    const data = { userId, username };
+    await prisma.user.upsert({
+      where: { userId },
+      create: data,
+      update: data
+    });
     const res = await request(app)
       .post('/schedules')
       .send({
@@ -68,7 +71,7 @@ describe('/schedules', () => {
         candidates: 'テスト候補1\r\nテスト候補2\r\nテスト候補3'
       })
       .expect('Location', /schedules/)
-      .expect(302)
+      .expect(302);
 
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
@@ -80,7 +83,7 @@ describe('/schedules', () => {
       .expect(/テスト候補1/)
       .expect(/テスト候補2/)
       .expect(/テスト候補3/)
-      .expect(200)
+      .expect(200);
   });
 });
 
@@ -98,24 +101,25 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
   });
 
   test('出欠が更新できる', async () => {
-    await User.upsert({ userId: 0, username: 'testuser' });
+    const userId = 0, username = 'testuser';
+    const data = { userId, username };
+    await prisma.user.upsert({
+      where: { userId },
+      create: data,
+      update: data
+    });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' })
+      .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
-    const candidate = await Candidate.findOne({
-      where: { scheduleId: scheduleId }
-    });
+    const candidate = await prisma.candidate.findFirst({ where: { scheduleId } });
     // 更新がされることをテスト
-    const userId = 0;
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/candidates/${candidate.candidateId}`)
       .send({ availability: 2 }) // 出席に更新
-      .expect('{"status":"OK","availability":2}')
-    const availabilities = await Availability.findAll({
-      where: { scheduleId: scheduleId }
-    });
+      .expect('{"status":"OK","availability":2}');
+    const availabilities = await prisma.availability.findMany({ where: { scheduleId } });
     expect(availabilities.length).toBe(1);
     expect(availabilities[0].availability).toBe(2);
   });
@@ -135,31 +139,34 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
   });
 
   test('コメントが更新できる', async () => {
-    await User.upsert({ userId: 0, username: 'testuser' });
+    const userId = 0, username = 'testuser';
+    const data = { userId, username };
+    await prisma.user.upsert({
+      where: { userId },
+      create: data,
+      update: data
+    });
     const res = await request(app)
       .post('/schedules')
       .send({
         scheduleName: 'テストコメント更新予定1',
         memo: 'テストコメント更新メモ1',
         candidates: 'テストコメント更新候補1'
-      })
+      });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     // 更新がされることをテスト
-    const userId = 0;
     await request(app)
       .post(`/schedules/${scheduleId}/users/${userId}/comments`)
       .send({ comment: 'testcomment' })
       .expect('{"status":"OK","comment":"testcomment"}')
-    const comments = await Comment.findAll({
-      where: { scheduleId: scheduleId }
-    });
+    const comments = await prisma.comment.findMany({ where: { scheduleId } });
     expect(comments.length).toBe(1);
     expect(comments[0].comment).toBe('testcomment');
   });
 });
 
-describe('/schedules/:scheduleId?edit=1', () => {
+describe('/schedules/:scheduleId/update', () => {
   let scheduleId = '';
   beforeAll(() => {
     passportStub.install(app);
@@ -173,22 +180,28 @@ describe('/schedules/:scheduleId?edit=1', () => {
   });
 
   test('予定が更新でき、候補が追加できる', async () => {
-    await User.upsert({ userId: 0, username: 'testuser' });
+    const userId = 0, username = 'testuser';
+    const data = { userId, username };
+    await prisma.user.upsert({
+      where: { userId },
+      create: data,
+      update: data
+    });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' })
+      .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     // 更新がされることをテスト
     await request(app)
-      .post(`/schedules/${scheduleId}?edit=1`)
-      .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' })
-    const s = await Schedule.findByPk(scheduleId);
-    expect(s.scheduleName).toBe('テスト更新予定2');
-    expect(s.memo).toBe('テスト更新メモ2');
-    const candidates = await Candidate.findAll({
-      where: { scheduleId: scheduleId },
-      order: [['candidateId', 'ASC']]
+      .post(`/schedules/${scheduleId}/update`)
+      .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' });
+    const schedule = await prisma.schedule.findUnique({ where: { scheduleId } });
+    expect(schedule.scheduleName).toBe('テスト更新予定2');
+    expect(schedule.memo).toBe('テスト更新メモ2');
+    const candidates = await prisma.candidate.findMany({
+      where: { scheduleId },
+      orderBy: { candidateId: 'asc' }
     });
     expect(candidates.length).toBe(2);
     expect(candidates[0].candidateName).toBe('テスト更新候補1');
@@ -196,7 +209,7 @@ describe('/schedules/:scheduleId?edit=1', () => {
   });
 });
 
-describe('/schedules/:scheduleId?delete=1', () => {
+describe('/schedules/:scheduleId/delete', () => {
   beforeAll(() => {
     passportStub.install(app);
     passportStub.login({ id: 0, username: 'testuser' });
@@ -208,45 +221,43 @@ describe('/schedules/:scheduleId?delete=1', () => {
   });
 
   test('予定に関連する全ての情報が削除できる', async () => {
-    await User.upsert({ userId: 0, username: 'testuser' });
+    const userId = 0, username = 'testuser';
+    const data = { userId, username };
+    await prisma.user.upsert({
+      where: { userId },
+      create: data,
+      update: data
+    });
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' })
+      .send({ scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' });
     const createdSchedulePath = res.headers.location;
     const scheduleId = createdSchedulePath.split('/schedules/')[1];
 
     // 出欠作成
-    const candidate = await Candidate.findOne({
-      where: { scheduleId: scheduleId }
-    });
+    const candidate = await prisma.candidate.findFirst({ where: { scheduleId } });
     await request(app)
-      .post(`/schedules/${scheduleId}/users/${0}/candidates/${candidate.candidateId}`)
+      .post(`/schedules/${scheduleId}/users/${userId}/candidates/${candidate.candidateId}`)
       .send({ availability: 2 }); // 出席に更新
 
     // コメント作成
     await request(app)
-      .post(`/schedules/${scheduleId}/users/${0}/comments`)
+      .post(`/schedules/${scheduleId}/users/${userId}/comments`)
       .send({ comment: 'testcomment' })
       .expect('{"status":"OK","comment":"testcomment"}');
 
     // 削除
     await request(app)
-      .post(`/schedules/${scheduleId}?delete=1`);
+      .post(`/schedules/${scheduleId}/delete`);
 
     // テスト
-    const comments = await Comment.findAll({
-      where: { scheduleId: scheduleId }
-    });
-    expect(comments.length).toBe(0);
-    const availabilities = await Availability.findAll({
-      where: { scheduleId: scheduleId }
-    });
+    const availabilities = await prisma.availability.findMany({ where: { scheduleId } });
     expect(availabilities.length).toBe(0);
-    const candidates = await Candidate.findAll({
-      where: { scheduleId: scheduleId }
-    });
+    const candidates = await prisma.candidate.findMany({ where: { scheduleId } });
     expect(candidates.length).toBe(0);
-    const schedule = await Schedule.findByPk(scheduleId);
+    const comments = await prisma.comment.findMany({ where: { scheduleId } });
+    expect(comments.length).toBe(0);
+    const schedule = await prisma.schedule.findUnique({ where: { scheduleId } });
     expect(!schedule).toBe(true);
   });
 });

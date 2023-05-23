@@ -1,21 +1,22 @@
 extends layout
 
 block content
-  div.jumbotron.my-3
-    h1.display-4 予定調整くん
-    p.lead 予定調整くんは、GitHubで認証でき、予定を作って出欠が取れるサービスです
-  if user
-    div
-      a(href="/schedules/new").btn.btn-info 予定を作る
-    - var hasSchedule = schedules.length > 0
-    if hasSchedule
-      h3.my-3 あなたの作った予定一覧
-      table.table
-        tr
-          th 予定名
-          th 更新日時
-        each schedule in schedules
+  div.container.my-3
+    div.p-5.bg-light.rounded-3
+      h1.text-body 予定調整くん
+      p.lead 予定調整くんは、GitHub で認証でき、予定を作って出欠が取れるサービスです。
+  div.container
+    if user
+      a.btn.btn-primary(href="/schedules/new") 予定を作る
+      - const hasSchedule = schedules.length > 0
+      if hasSchedule
+        h3.my-3 あなたの作った予定一覧
+        table.table
           tr
-            td
-              a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
-            td #{schedule.formattedUpdatedAt}
+            th 予定名
+            th 更新日時
+          each schedule in schedules
+            tr
+              td
+                a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
+              td #{schedule.formattedUpdatedAt}
