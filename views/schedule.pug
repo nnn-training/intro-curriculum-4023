@@ -10,38 +10,39 @@ block content
   if isMine
     a.btn.btn-primary(href=`/schedules/${schedule.scheduleId}/edit`) この予定を編集する
   h3.my-3 出欠表
-  table.table.table-bordered
-    tr
-      th 予定
-      each user in users
-        th #{user.username}
-    each candidate in candidates
+  div.table-responsive
+    table.table.table-bordered
       tr
-        th #{candidate.candidateName}
+        th 予定
         each user in users
-          - const availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-          - const availabilityLabels = ['欠', '？', '出'];
-          - const buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
-          td
-            if user.isSelf
-              button(class=`availability-toggle-button btn btn-lg ${buttonStyles[availability]}`
+          th #{user.username}
+      each candidate in candidates
+        tr
+          th #{candidate.candidateName}
+          each user in users
+            - const availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
+            - const availabilityLabels = ['欠', '？', '出'];
+            - const buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
+            td
+              if user.isSelf
+                button(class=`availability-toggle-button btn btn-lg ${buttonStyles[availability]}`
+                  data-schedule-id=schedule.scheduleId
+                  data-user-id=user.userId
+                  data-candidate-id=candidate.candidateId
+                  data-availability=availability) #{availabilityLabels[availability]}
+              else
+                h3 #{availabilityLabels[availability]}
+      tr
+        th コメント
+        each user in users
+          if user.isSelf
+            td
+              p
+                small#self-comment #{commentMap.get(user.userId)}
+              button(
                 data-schedule-id=schedule.scheduleId
-                data-user-id=user.userId
-                data-candidate-id=candidate.candidateId
-                data-availability=availability) #{availabilityLabels[availability]}
-            else
-              h3 #{availabilityLabels[availability]}
-    tr
-      th コメント
-      each user in users
-        if user.isSelf
-          td
-            p
-              small#self-comment #{commentMap.get(user.userId)}
-            button(
-              data-schedule-id=schedule.scheduleId
-              data-user-id=user.userId)#self-comment-button.btn.btn-primary 編集
-        else
-          td
-            p
-              small #{commentMap.get(user.userId)}
+                data-user-id=user.userId)#self-comment-button.btn.btn-primary 編集
+          else
+            td
+              p
+                small #{commentMap.get(user.userId)}
