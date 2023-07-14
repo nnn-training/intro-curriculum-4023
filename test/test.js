@@ -63,9 +63,12 @@ describe('/schedules', () => {
       create: data,
       update: data
     });
+    const { formToken, cookieToken } = await getCSRFTokens();
     const res = await request(app)
       .post('/schedules')
+      .set('Cookie', `csrfToken=${cookieToken}`)
       .send({
+        _csrf: formToken,
         scheduleName: 'テスト予定1',
         memo: 'テストメモ1\r\nテストメモ2',
         candidates: 'テスト候補1\r\nテスト候補2\r\nテスト候補3'
@@ -108,9 +111,11 @@ describe('/schedules/:scheduleId/users/:userId/candidates/:candidateId', () => {
       create: data,
       update: data
     });
+    const { formToken, cookieToken } = await getCSRFTokens();
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' });
+      .set('Cookie', `csrfToken=${cookieToken}`)
+      .send({ _csrf: formToken, scheduleName: 'テスト出欠更新予定1', memo: 'テスト出欠更新メモ1', candidates: 'テスト出欠更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     const candidate = await prisma.candidate.findFirst({ where: { scheduleId } });
@@ -146,9 +151,12 @@ describe('/schedules/:scheduleId/users/:userId/comments', () => {
       create: data,
       update: data
     });
+    const { formToken, cookieToken } = await getCSRFTokens();
     const res = await request(app)
       .post('/schedules')
+      .set('Cookie', `csrfToken=${cookieToken}`)
       .send({
+        _csrf: formToken,
         scheduleName: 'テストコメント更新予定1',
         memo: 'テストコメント更新メモ1',
         candidates: 'テストコメント更新候補1'
@@ -187,15 +195,18 @@ describe('/schedules/:scheduleId/update', () => {
       create: data,
       update: data
     });
+    const { formToken, cookieToken } = await getCSRFTokens();
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' });
+      .set('Cookie', `csrfToken=${cookieToken}`)
+      .send({ _csrf: formToken, scheduleName: 'テスト更新予定1', memo: 'テスト更新メモ1', candidates: 'テスト更新候補1' });
     const createdSchedulePath = res.headers.location;
     scheduleId = createdSchedulePath.split('/schedules/')[1];
     // 更新がされることをテスト
     await request(app)
       .post(`/schedules/${scheduleId}/update`)
-      .send({ scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' });
+      .set('Cookie', `csrfToken=${cookieToken}`)
+      .send({ _csrf: formToken, scheduleName: 'テスト更新予定2', memo: 'テスト更新メモ2', candidates: 'テスト更新候補2' });
     const schedule = await prisma.schedule.findUnique({ where: { scheduleId } });
     expect(schedule.scheduleName).toBe('テスト更新予定2');
     expect(schedule.memo).toBe('テスト更新メモ2');
@@ -228,9 +239,11 @@ describe('/schedules/:scheduleId/delete', () => {
       create: data,
       update: data
     });
+    const { formToken, cookieToken } = await getCSRFTokens();
     const res = await request(app)
       .post('/schedules')
-      .send({ scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' });
+      .set('Cookie', `csrfToken=${cookieToken}`)
+      .send({ _csrf: formToken, scheduleName: 'テスト削除予定1', memo: 'テスト削除メモ1', candidates: 'テスト削除候補1' });
     const createdSchedulePath = res.headers.location;
     const scheduleId = createdSchedulePath.split('/schedules/')[1];
 
@@ -248,7 +261,9 @@ describe('/schedules/:scheduleId/delete', () => {
 
     // 削除
     await request(app)
-      .post(`/schedules/${scheduleId}/delete`);
+      .post(`/schedules/${scheduleId}/delete`)
+      .set('Cookie', `csrfToken=${cookieToken}`)
+      .send({ _csrf: formToken });
 
     // テスト
     const availabilities = await prisma.availability.findMany({ where: { scheduleId } });
@@ -261,3 +276,11 @@ describe('/schedules/:scheduleId/delete', () => {
     expect(!schedule).toBe(true);
   });
 });
+
+async function getCSRFTokens() {
+  const response = await request(app).get('/schedules/new');
+  return {
+    formToken: response.text.match(/<input type="hidden" name="_csrf" value="(.+?)">/)[1],
+    cookieToken: response.headers['set-cookie'][0].match(/csrfToken=(.+?);/)[1]
+  };
+}
