@@ -1,3 +1,4 @@
 node_modules/
-.envpublic/javascripts/bundle.js
+.env
+public/javascripts/bundle.js
 public/stylesheets/bundle.css
