@@ -1,0 +1,49 @@
+.container {
+    margin-top: 50px;
+    margin-bottom: 80px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    line-height: 250%;
+}
+
+a {
+    color: #0d6efd;
+}
+
+hr {
+    width: 500px;
+    margin: 40px 0px;
+    border: solid 0.5px #0d6efd;
+}
+
+textarea {
+    height: 150px;
+    padding: 15px 20px!important;
+}
+
+input{
+    padding: 10px 20px!important;
+}
+
+button[type="submit"], a.btn {
+    display: inline-block;
+    width: 200px;
+    color: white;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    height: 50px;
+}
+
+a.btn{
+    padding: 9px;
+    margin: 20px 0px;
+}
+
+#schedules {
+    margin-top: 20px;
+}
+
+table  tr > * {
+    padding: 20px 30px!important;
+}

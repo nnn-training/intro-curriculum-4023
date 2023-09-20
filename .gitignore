@@ -1,4 +1,6 @@
-node_modules/
+node_modules
+.vscode
 .env
 public/javascripts/bundle.js
 public/stylesheets/bundle.css
+.DS_Store

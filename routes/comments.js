@@ -1,53 +1,55 @@
-'use strict';
+'use strict'
+
 const express = require('express');
 const router = express.Router();
 const { param, body, validationResult } = require('express-validator');
-const authenticationEnsurer = require('./authentication-ensurer');
+const ensurer = require('./authentication-ensurer');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient({ log: [ 'query' ] });
+const { val } = require('./schedules');
+const prisma = new PrismaClient({ log: ['query'] });
 
-router.post(
-  '/:scheduleId/users/:userId/comments',
-  authenticationEnsurer,
-  async (req, res, next) => {
-    await body('comment').isString().withMessage('コメントを入力してください。').run(req);
-    await param('scheduleId').isUUID('4').withMessage('有効なスケジュール ID を指定してください。').run(req);
-    await param('userId').isInt().custom((value, { req }) => {
-      return parseInt(value) === parseInt(req.user.id);
-    }).withMessage('ユーザー ID が不正です。').run(req);
-    const errors = validationResult(req);
+// コメントを追加するWebAPIになるらしい
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 'NG', errors: errors.array() });
-    }
+/* GET comments listing. */
+router.post('/:scheduleId/comments', ensurer, async function (req, res, next) {
 
-    const scheduleId = req.params.scheduleId;
-    const userId = parseInt(req.params.userId);
-    const comment = req.body.comment;
+  await body('comment').isString().withMessage('文字列で入力してください').run(req);
+  await param('scheduleId').isUUID(4).withMessage('有効な予定IDを指定してください').run(req);
+  const errors = validationResult(req);
 
-    const data = {
-      userId,
-      scheduleId,
-      comment: comment.slice(0, 255)
-    };
-
-    try {
-      await prisma.comment.upsert({
-        where: {
-          commentCompositeId: {
-            userId,
-            scheduleId
-          }
-        },
-        update: data,
-        create: data
-      });
-      res.status(200).json({ status: 'OK', comment: comment });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ status: 'NG', errors: [{ msg: 'データベース エラー。' }] });
-    }
+  console.log(req.body, req.params.scheduleId);
+  console.log(errors.array());
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ status: 'NG', errors: errors.array() });
   }
-);
+  // NOTE これ別にtry-catchなくてもデータベースエラーは平気じゃないかな...
+
+  try {
+    const data = {
+      userId: req.user,
+      scheduleId: req.params.scheduleId,
+      comment: (req.body.comment).slice(0, 255)
+    };
+    await prisma.comment.upsert({
+      where: { commentCompositeId: { userId: data.userId, scheduleId: data.scheduleId } },
+      update: data,
+      create: data
+    });
+    res.json({ status: 'OK', comment: data.comment });
+  } catch (err) {
+    next(val(err));
+  }
+});
+
+router.get('/:scheduleId/comments', async function (req, res, next) {
+  try {
+    const db = await prisma.comment.findMany({
+      where: {scheduleId: req.params.scheduleId}
+    });
+    res.json({ status: 'OK', comment: db });
+  } catch (err) {
+    next(val('お探しの予定は見つかりませんでした'));
+  }
+})
 
 module.exports = router;

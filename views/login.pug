@@ -1,4 +1,19 @@
-extends layout
-
+extends layout 
 block content
-  a(href="/auth/github").btn.btn-primary.my-3 GitHubでログイン
+    p ここからログインができます。
+    if user
+        p 現在 #{user} でログイン中
+        a.btn.btn-primary(href="/logout") ログアウト 
+        br
+    else 
+        hr
+        form(action="/login/auth" method="post") 
+            p
+                label.form-label(style="margin-right: 20px") ユーザー名
+                input(type="text" name="username" placeholder="ユーザー名を入力..." required)
+            p
+                label.form-label(style="margin-right: 20px") パスワード 
+                input(type="text" name="password" placeholder="パスワードを入力..." required)
+            button.btn.btn-primary(type="submit") ログイン
+        hr
+    a(href="/") トップへ戻る

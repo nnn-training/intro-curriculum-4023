@@ -1,57 +1,72 @@
-'use strict';
+'use strict'
+
+// Web APIを作るらしい
+
 const express = require('express');
 const router = express.Router();
 const { param, body, validationResult } = require('express-validator');
-const authenticationEnsurer = require('./authentication-ensurer');
+const ensurer = require('./authentication-ensurer');
 const { PrismaClient } = require('@prisma/client');
+const { val } = require('./schedules');
 const prisma = new PrismaClient({ log: [ 'query' ] });
 
-router.post(
-  '/:scheduleId/users/:userId/candidates/:candidateId',
-  authenticationEnsurer,
-  async (req, res, next) => {
-    await body('availability').isInt({ min: 0, max: 2 }).withMessage('0 以上 2 以下の数値を指定してください。').run(req);
-    await param('scheduleId').isUUID('4').withMessage('有効なスケジュール ID を指定してください。').run(req);
-    await param('candidateId').isInt().withMessage('有効な候補 ID を指定してください。').run(req);
-    await param('userId').isInt().custom((value, { req }) => {
-      return parseInt(value) === parseInt(req.user.id);
-    }).withMessage('ユーザー ID が不正です。').run(req);
-    const errors = validationResult(req);
+/* GET availabilities listing. */
+router.post('/:scheduleId/candidates/:candidateId', ensurer, async function(req, res, next) {
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ status: 'NG', errors: errors.array() });
-    }
-
-    const scheduleId = req.params.scheduleId;
-    const userId = parseInt(req.params.userId);
-    const candidateId = parseInt(req.params.candidateId);
-    let availability = req.body.availability;
-    availability = availability ? parseInt(availability) : 0;
-
-    const data = {
-      userId,
-      scheduleId,
-      candidateId,
-      availability
-    };
-
-    try {
-      await prisma.availability.upsert({
-        where: {
-          availabilityCompositeId: {
-            candidateId,
-            userId
-          }
-        },
-        create: data,
-        update: data
-      });
-      res.status(200).json({ status: 'OK', availability: availability });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ status: 'NG', errors: [{ msg: 'データベース エラー。' }] });
-    }
+  await body('availability').isInt({ min: 0, max: 2 }).withMessage('出欠データが間違っています').run(req);
+  await param('scheduleId').isUUID(4).withMessage('有効な予定IDを指定してください').run(req);
+  await param('candidateId').isInt().withMessage('有効な候補IDを指定してください').run(req);
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ status: 'NG', errors: errors.array() });
   }
-);
+
+  /**
+   * データをまとめたオブジェクト
+   * @type {{userId: string, candidateId: number, scheduleId: uuidv4, availability: number}}
+   */
+  const data = {
+    userId: req.user,
+    candidateId: parseInt(req.params.candidateId),
+    scheduleId: req.params.scheduleId,
+    availability: parseInt(req.body.availability)
+  }
+  await prisma.availability.upsert({
+    where: {
+      availabilityCompositeId: { // 複合主キー
+        candidateId: data.candidateId,
+        userId: data.userId
+      }
+    },
+    create: data,
+    update: data
+  })
+  res.json({status: 'OK', availability: data.availability, about: '出欠を変更するWebAPI'});
+});
+
+router.get('/:scheduleId/candidates/:candidateId', async function (req,res) {
+  // リクエストされた候補と出欠を取得するAPI
+
+  await param('scheduleId').isUUID(4).withMessage('有効な予定IDを指定してください').run(req);
+  await param('candidateId').isInt().withMessage('有効な候補IDを指定してください').run(req);
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    return res.status(400).json({ status: 'NG', errors: errors.array() });
+  }
+
+  try {
+    const ava = await prisma.availability.findMany({
+      where: {
+        candidateId: parseInt(req.params.candidateId),
+        userId: req.user,
+        scheduleId: req.params.scheduleId
+      }
+    })
+    res.json({status: 'OK', ava: ava});
+  } catch(err) {
+    console.warn(err);
+    res.json({status: 'ERROR', about: err});
+  }
+})
 
 module.exports = router;
