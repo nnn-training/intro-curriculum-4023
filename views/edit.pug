@@ -1,24 +1,28 @@
-extends layout
-
-block content
-  h3.my-3 予定の編集
-  form(method="post", action=`/schedules/${schedule.scheduleId}/update`)
-    input(type="hidden" name="_csrf" value!=csrfToken)
-    div.mb-3
-      label.form-label(for="scheduleName") 予定名
-      input#scheduleName.form-control(type="text" name="scheduleName" value=schedule.scheduleName)
-    div.mb-3
-      label.form-label(for="memo") メモ
-      textarea#memo.form-control(name="memo") #{schedule.memo}
-    div.mb-3
-      label.form-label 既存の日程候補
-      ul.list-group.mb-2
-        each candidate in candidates
-          li.list-group-item #{candidate.candidateName}
-      label.form-label(for="candidates") 候補日程の追加 (改行して複数入力してください)
-      textarea#candidates.form-control(name="candidates")
-    button.btn.btn-primary(type="submit") 以上の内容で予定を編集する
-  h3.my-3 危険な変更
-  form(method="post", action=`/schedules/${schedule.scheduleId}/delete`)
-    input(type="hidden" name="_csrf" value!=csrfToken)
-    button.btn.btn-danger(type="submit") この予定を削除する
+extends layout 
+block content 
+    h2 予定の編集
+    p ここで予定を編集できます
+    hr
+    form(action=`/schedules/${schedule.scheduleId}/delete`, method="post") 
+        input(type="hidden" name="_csrf" value!=csrfToken)
+        h3.my-3 予定の削除
+        p この変更は取り消しができません。
+        button(type="submit").btn.btn-danger 予定を削除する
+    hr
+    form(action=`/schedules/${schedule.scheduleId}/update`, method="post") 
+        input(type="hidden" name="_csrf" value!=csrfToken)
+        div.mb-4
+            h6.mb-3 予定名
+            input.form-control(type="text" name="scheduleName" value=schedule.scheduleName)
+        div.mb-4
+            h6.mb-3 詳細
+            textarea.form-control(name="memo") #{schedule.memo}
+        div.mb-4 
+            h6.mb-3 候補日程
+            ul.list-group.mb-2 
+                each candidate in candidates
+                    li.list-group-item #{candidate.candidateName}
+            label.form-label 候補日程を追加（改行して複数入力してください）
+            textarea.form-control(name="candidates" style="height: 100px") 
+        div.mb-4 
+            button(type="submit").btn.btn-primary 更新

@@ -1,0 +1,35 @@
+extends layout 
+
+block content
+    if mine
+        h3.my-3 あなたが作った予定一覧
+    else 
+        h3.my-3 予定一覧
+    p ここから予定一覧を確認できます。
+    if user
+        a.btn.btn-primary(href="/schedules/new") 予定を作る
+        br
+        if mine 
+            a.btn.btn-primary(href="/schedules") 全ての予定を見る
+        else
+            a.btn.btn-primary(href="/schedules/mine") 自分の予定を見る
+    else 
+        a.btn.btn-primary(href="/login") ログイン 
+        p 予定を作成するにはログインしてください
+    hr(style="border:none")
+    table(cellspacing="5px").table 
+        tr 
+            th 予定名
+            th 説明
+            th 作成者
+            th 更新日時
+        each schedule in schedules
+            tr
+                td
+                    a(href=`/schedules/${schedule.scheduleId}`) #{schedule.scheduleName}
+                td #{schedule.memo}
+                td #{schedule.createdBy}
+                td #{schedule.formattedUpdatedAt}
+    hr(style="border: none")
+    p
+        a(href="/") トップへ戻る

@@ -1,48 +1,46 @@
-extends layout
+extend layout 
 
-block content
-  div.card.my-3
-    h4.card-header #{schedule.scheduleName}
-    div.card-body
-      p.card-text(style="white-space: pre;") #{schedule.memo}
-    div.card-footer 作成者: #{schedule.user.username}
-  - const isMine = parseInt(user.id) === schedule.user.userId
-  if isMine
-    a.btn.btn-primary(href=`/schedules/${schedule.scheduleId}/edit`) この予定を編集する
-  h3.my-3 出欠表
-  div.table-responsive
-    table.table.table-bordered
-      tr
-        th 予定
-        each user in users
-          th #{user.username}
-      each candidate in candidates
+block content 
+    h2 #{schedule.scheduleName}
+    p 作成者: 
+        a(href="/schedules") #{schedule.user.username}
+    p(style="white-space:pre;") #{schedule.memo}
+    if !user
+        hr
+        p 出欠を編集するにはログインしてください
+        a.btn.btn-primary(href="/login") ログイン 
+        hr
+    h3.mb-3 出欠表
+    table.table
         tr
-          th #{candidate.candidateName}
-          each user in users
-            - const availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
-            - const availabilityLabels = ['欠', '？', '出'];
-            - const buttonStyles = ['btn-danger', 'btn-secondary', 'btn-success'];
-            td
-              if user.isSelf
-                button(class=`availability-toggle-button btn btn-lg ${buttonStyles[availability]}`
-                  data-schedule-id=schedule.scheduleId
-                  data-user-id=user.userId
-                  data-candidate-id=candidate.candidateId
-                  data-availability=availability) #{availabilityLabels[availability]}
-              else
-                h3 #{availabilityLabels[availability]}
-      tr
-        th コメント
-        each user in users
-          if user.isSelf
-            td
-              p
-                small#self-comment #{commentMap.get(user.userId)}
-              button(
-                data-schedule-id=schedule.scheduleId
-                data-user-id=user.userId)#self-comment-button.btn.btn-primary 編集
-          else
-            td
-              p
-                small #{commentMap.get(user.userId)}
+            th 予定
+            each user in users
+                th #{user.username}
+        each candidate in candidates
+            tr
+                td #{candidate.candidateName}
+                each user in users
+                    - const availability = availabilityMapMap.get(user.userId).get(candidate.candidateId)
+                    - const availabilityLabels = ['欠席', '？', '出席'];
+                    td
+                        if user.isSelf
+                            button(
+                                data-schedule-id=schedule.scheduleId
+                                data-candidate-id=candidate.candidateId
+                                data-availability=availability
+                            ).ava-toggle-btn.btn.btn-primary #{availabilityLabels[availability]}
+                        else 
+                            p #{availabilityLabels[availability]}
+        tr
+            th コメント
+            each user in users
+                td
+                    if user.isSelf
+                        p#self-comment #{commentMap.get(user.userId)}
+                        button(
+                            data-schedule-id=schedule.scheduleId
+                        )#comment-btn.btn.btn-primary 編集
+                    else 
+                        p #{commentMap.get(user.userId)}
+    if schedule.user.userId === user
+        a(href=`/schedules/${schedule.scheduleId}/edit`).btn.btn-primary 編集 

@@ -1,3 +1,4 @@
+// モジュールの読み込み
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -6,50 +7,22 @@ const logger = require('morgan');
 const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 const csurf = require('tiny-csrf');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient({ log: [ 'query' ] });
-
-const GitHubStrategy = require('passport-github2').Strategy;
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID || '2f831cb3d4aac02393aa';
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET || '9fbc340ac0175123695d2dedfbdf5a78df3b8067';
-
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((obj, done) => done(null, obj));
-
-passport.use(new GitHubStrategy({
-    clientID: GITHUB_CLIENT_ID,
-    clientSecret: GITHUB_CLIENT_SECRET,
-    callbackURL: process.env.CALLBACK_URL || 'http://localhost:8000/auth/github/callback'
-  },
-  (accessToken, refreshToken, profile, done) => {
-    process.nextTick(async () => {
-      const userId = parseInt(profile.id);
-
-      const data = {
-        userId,
-        username: profile.username
-      }
-
-      await prisma.user.upsert({
-        where: { userId },
-        create: data,
-        update: data
-      });
-
-      done(null, profile);
-    });
-  }
-));
-
-const indexRouter = require('./routes/index');
-const loginRouter = require('./routes/login');
-const logoutRouter = require('./routes/logout');
-const schedulesRouter = require('./routes/schedules');
-const availabilitiesRouter = require('./routes/availabilities');
-const commentsRouter = require('./routes/comments');
+const prisma = new PrismaClient({ log: ['query'] })
 
 const app = express();
+
+// ルーターの読み込み
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const loginRouter = require('./routes/login');
+const logoutRouter = require('./routes/logout');
+const shedRouter = require('./routes/schedules');
+const availRouter = require('./routes/availabilities');
+const commentsRouter = require('./routes/comments');
+
 app.use(helmet());
 
 // view engine setup
@@ -62,44 +35,87 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser('nyobiko_signed_cookies'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({ secret: 'e55be81b307c1c09', resave: false, saveUninitialized: false }));
-app.use(passport.initialize());
-app.use(passport.session());
-
+// csrf対策
 app.use(
   csurf(
     'nyobikosecretsecret9876543212345',
     ['POST'],
-    [/.*\/(candidates|comments).*/i] 
+    [/.*\/(candidates|comments|login\/auth).*/i] 
   )
 );
 
+// express-session
+app.use(session ({
+  secret: 'mysecret',
+  resave: false,
+  saveUninitialized:false,
+}))
+
+//passport　初期設定
+app.use(passport.initialize());
+app.use(passport.session());
+
+// ルーター一覧
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
-app.use('/schedules', schedulesRouter);
-app.use('/schedules', availabilitiesRouter);
+app.use('/schedules', shedRouter);
+app.use('/schedules', availRouter);
 app.use('/schedules', commentsRouter);
 
-app.get(
-  '/auth/github',
-  passport.authenticate('github', { scope: ['user:email'] })
-);
+// ユーザーデータ
+const USER_DATA = [
+  {username: 'alice', password: 'alice'},
+  {username: 'Taro', password: 'Taro123'},
+  {username: 'admin', password: 'apple'}
+];
 
-app.get(
-  '/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  (req, res) => {
-    const loginFrom = req.cookies.loginFrom;
-    // オープンリダイレクタ脆弱性対策
-    if (loginFrom && loginFrom.startsWith('/')) {
-      res.clearCookie('loginFrom');
-      res.redirect(loginFrom);
+passport.use(new LocalStrategy(
+  (username, password, cb) => {
+    const user = USER_DATA.find(e => username === e.username);
+    if (user){
+      if (password === user.password) {
+        return cb(null, username);
+      } else {
+        console.log('パスワードのチェックに失敗');
+        return cb(null, false);
+      }
     } else {
-      res.redirect('/');
+      console.log('ユーザーネームのチェックに失敗');
+      return cb(null, false);
     }
   }
-);
+));
+
+// ユーザーデータからユニークユーザー識別子を取り出す
+passport.serializeUser( (username, cb) => {
+  cb(null, username);
+});
+
+passport.deserializeUser( (username, cb) => {
+  return cb(null, username);
+})
+
+app.post('/login/auth',
+  passport.authenticate('local', {
+    failureRedirect: '/login', // 認証失敗した場合の飛び先
+    failureFlash: false
+  }),
+  async (req,res) => {
+    console.log('認証成功');
+
+    // データベースの処理
+    const data = {username: req.user, userId: req.user};
+    await prisma.user.upsert({
+      where: { userId: data.username },
+      create: data,
+      update: data
+    })
+
+    res.redirect('/');
+  }
+)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
