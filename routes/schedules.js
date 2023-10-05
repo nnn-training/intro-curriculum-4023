@@ -197,7 +197,7 @@ router.post('/:scheduleId/update', authenticationEnsurer, async (req, res, next)
     });
     // 候補が追加されているかチェック
     const candidateNames = parseCandidateNames(req);
-    if (candidateNames) {
+    if (candidateNames.length) {
       createCandidatesAndRedirect(candidateNames, schedule.scheduleId, res);
     } else {
       res.redirect('/schedules/' + schedule.scheduleId);
