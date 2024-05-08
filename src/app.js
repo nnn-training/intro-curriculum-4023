@@ -9,7 +9,8 @@ const { secureHeaders } = require("hono/secure-headers");
 const { env } = require("hono/adapter");
 const { getCookie, deleteCookie } = require("hono/cookie");
 const { serveStatic } = require("@hono/node-server/serve-static");
-const { githubAuth } = require("@hono/oauth-providers/github");
+const { trimTrailingSlash } = require("hono/trailing-slash")
+const { githubAuth } = require("@hono/oauth-providers/github"); = require("@hono/oauth-providers/github");
 const { getIronSession } = require("iron-session");
 const { PrismaClient } = require("@prisma/client");
 const layout = require("./layout");
