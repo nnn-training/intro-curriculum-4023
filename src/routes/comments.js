@@ -48,22 +48,8 @@ app.post(
     const { comment } = c.req.valid("json");
 
     const { user } = c.get("session") ?? {};
-    if (user?.id !== userId) {
-      return c.json({
-        status: "NG",
-        errors: [
-          { msg: "ユーザー ID が不正です。" }
-        ],
-      }, 403);
-    }
 
-      const data = {
-        userId,
-        scheduleId,
-        comment,
-      };
-    try {
-      await prisma.comment.upsert({
+    await prisma.comment.upsert({
         where: {
           commentCompositeId: {
             userId,
