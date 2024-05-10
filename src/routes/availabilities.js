@@ -49,24 +49,8 @@ app.post(
     const { availability } = c.req.valid("json");
 
     const { user } = c.get("session") ?? {};
-    if (user?.id !== userId) {
-      return c.json({
-        status: "NG",
-        errors: [
-          { msg: "ユーザー ID が不正です。" }
-        ],
-      }, 403);
-    }
 
-    const data = {
-      userId,
-      scheduleId,
-      candidateId,
-      availability,
-    };
-
-    try {
-      await prisma.availability.upsert({
+    await prisma.availability.upsert({
         where: {
           availabilityCompositeId: {
             candidateId,
