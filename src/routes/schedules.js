@@ -200,6 +200,11 @@ app.get("/:scheduleId", ensureAuthenticated(), scheduleIdValidator, async (c) =>
           </div>
           <div class="card-footer">作成者: ${schedule.user.username}</div>
         </div>
+        <label class="form-label" for="share-url">共有用 URL</label>
+        <div class="input-group mb-3">
+          <input id="share-url" class="form-control" type="text" aria-describedby="copy-button" readonly value="${c.req.url}" />
+          <button id="copy-button" class="btn btn-outline-secondary" type="button">Copy</button>
+        </div>
         ${isMine(user.id, schedule)
           ? html`<a
               href="/schedules/${schedule.scheduleId}/edit"
