@@ -11,6 +11,8 @@ const { HTTPException } = require("hono/http-exception");
 
 const app = new Hono();
 
+app.use(ensureAuthenticated());
+
 const scheduleIdValidator = zValidator(
   "param",
   z.object({
@@ -54,7 +56,7 @@ function parseCandidateNames(candidatesStr) {
     .filter((s) => s !== "");
 }
 
-app.get("/new", ensureAuthenticated(), (c) => {
+app.get("/new", (c) => {
   return c.html(
     layout(
       c,
@@ -82,7 +84,7 @@ app.get("/new", ensureAuthenticated(), (c) => {
   );
 });
 
-app.post("/", ensureAuthenticated(), scheduleFormValidator, async (c) => {
+app.post("/", scheduleFormValidator, async (c) => {
   const { user } = c.get("session") ?? {};
   const body = c.req.valid("form");
 
@@ -105,7 +107,7 @@ app.post("/", ensureAuthenticated(), scheduleFormValidator, async (c) => {
   return c.redirect("/schedules/" + schedule.scheduleId);
 });
 
-app.get("/:scheduleId", ensureAuthenticated(), scheduleIdValidator, async (c) => {
+app.get("/:scheduleId", scheduleIdValidator, async (c) => {
   const { user } = c.get("session") ?? {};
   const schedule = await prisma.schedule.findUnique({
     where: { scheduleId: c.req.valid("param").scheduleId },
@@ -283,7 +285,7 @@ function isMine(userId, schedule) {
   return schedule && parseInt(schedule.createdBy, 10) === parseInt(userId, 10);
 }
 
-app.get("/:scheduleId/edit", ensureAuthenticated(), scheduleIdValidator, async (c) => {
+app.get("/:scheduleId/edit", scheduleIdValidator, async (c) => {
   const { user } = c.get("session") ?? {};
   const schedule = await prisma.schedule.findUnique({
     where: { scheduleId: c.req.valid("param").scheduleId },
@@ -346,7 +348,7 @@ app.get("/:scheduleId/edit", ensureAuthenticated(), scheduleIdValidator, async (
   );
 });
 
-app.post("/:scheduleId/update", ensureAuthenticated(), scheduleIdValidator, scheduleFormValidator, async (c) => {
+app.post("/:scheduleId/update", scheduleIdValidator, scheduleFormValidator, async (c) => {
   const { user } = c.get("session") ?? {};
   const schedule = await prisma.schedule.findUnique({
     where: { scheduleId: c.req.valid("param").scheduleId },
@@ -382,7 +384,7 @@ async function deleteScheduleAggregate(scheduleId) {
 }
 app.deleteScheduleAggregate = deleteScheduleAggregate;
 
-app.post("/:scheduleId/delete", ensureAuthenticated(), scheduleIdValidator, async (c) => {
+app.post("/:scheduleId/delete", scheduleIdValidator, async (c) => {
   const { user } = c.get("session") ?? {};
   const schedule = await prisma.schedule.findUnique({
     where: { scheduleId: c.req.valid("param").scheduleId },
