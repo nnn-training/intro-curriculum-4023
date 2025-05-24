@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.14.2",
-    "@hono/oauth-providers": "0.4.0",
+    "@hono/oauth-providers": "0.8.0",
     "@hono/zod-validator": "0.2.1",
     "@popperjs/core": "2.11.8",
     "@prisma/client": "5.13.0",
