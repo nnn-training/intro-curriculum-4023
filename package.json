@@ -11,7 +11,7 @@
     "test": "jest --setupFiles dotenv/config"
   },
   "dependencies": {
-    "@hono/node-server": "1.11.0",
+    "@hono/node-server": "^1.14.2",
     "@hono/oauth-providers": "0.4.0",
     "@hono/zod-validator": "0.2.1",
     "@popperjs/core": "2.11.8",
