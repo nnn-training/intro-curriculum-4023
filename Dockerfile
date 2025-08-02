@@ -1,8 +1,7 @@
 FROM node:22.15.0-slim
 
 RUN apt-get update && apt-get install -y \
-  curl \
-  tmux \
+  git \
   locales \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
@@ -12,3 +11,7 @@ ENV LANG ja_JP.utf8
 ENV TZ=Asia/Tokyo
 
 WORKDIR /app
+COPY . /app
+RUN yarn install
+RUN npx webpack
+CMD ["sh", "run.sh"]
