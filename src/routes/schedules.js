@@ -206,7 +206,7 @@ app.get("/:scheduleId", scheduleIdValidator, async (c) => {
                 href="/schedules/${schedule.scheduleId}/edit"
                 class="btn btn-primary"
               >
-                この予定を編集する
+                この予定を編集する <i class="bi bi-pencil"></i>
               </a>`
           : ""}
         <h3 class="my-3">出欠表</h3>
@@ -334,13 +334,13 @@ app.get("/:scheduleId/edit", scheduleIdValidator, async (c) => {
             <textarea name="candidates" class="form-control"></textarea>
           </div>
           <button type="submit" class="btn btn-primary">
-            以上の内容で予定を編集する
+            以上の内容で予定を編集する <i class="bi bi-pencil"></i>
           </button>
         </form>
         <h3 class="my-3">危険な変更</h3>
         <form method="post" action="/schedules/${schedule.scheduleId}/delete">
           <button type="submit" class="btn btn-danger">
-            この予定を削除する
+            この予定を削除する <i class="bi bi-trash"></i>
           </button>
         </form>
       `,
