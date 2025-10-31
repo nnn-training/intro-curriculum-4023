@@ -66,7 +66,11 @@ app.use("/auth/github", async (c, next) => {
 // GitHub 認証の後の処理
 app.get("/auth/github", async (c) => {
   const session = c.get("session");
-  session.user = c.get("user-github");
+  const githubUser = c.get("user-github");
+  session.user = {
+    id: githubUser.id,
+    login: githubUser.login
+  }
   await session.save();
 
   // ユーザ情報をデータベースに保存
