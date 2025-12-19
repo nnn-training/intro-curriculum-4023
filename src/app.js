@@ -87,7 +87,7 @@ app.get("/auth/github", async (c) => {
 
   const loginFrom = getCookie(c, "loginFrom");
   // オープンリダイレクタ脆弱性対策
-  if (loginFrom && loginFrom.startsWith('/')) {
+  if (loginFrom && /^\/(?!\/)[\w\-./?=&%+#:]*$/.test(loginFrom)) {
     deleteCookie(c, "loginFrom");
     return c.redirect(loginFrom);
   } else {
