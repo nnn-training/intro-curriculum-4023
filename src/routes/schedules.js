@@ -156,7 +156,7 @@ app.get("/:scheduleId", scheduleIdValidator, async (c) => {
   userMap.set(parseInt(user.id), {
     isSelf: true,
     userId: parseInt(user.id),
-    username: user.username,
+    username: user.login,
   });
   availabilities.forEach((a) => {
     userMap.set(a.user.userId, {
