@@ -41,7 +41,7 @@ const scheduleFormValidator = zValidator(
 
 async function createCandidates(candidateNames, scheduleId) {
   const candidates = candidateNames.map((candidateName) => ({
-    candidateName,
+    candidateName: candidateName.slice(0, 255),
     scheduleId,
   }));
   await prisma.candidate.createMany({
