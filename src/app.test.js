@@ -319,9 +319,7 @@ describe("/schedules/:scheduleId/delete", () => {
     );
 
     // 削除
-    const res = await app.request(`/schedules/${scheduleId}/delete`, {
-      method: "POST",
-    });
+    const res = await sendFormRequest(app, `/schedules/${scheduleId}/delete`, {});
     expect(res.status).toBe(302);
 
     // テスト
