@@ -1,7 +1,8 @@
 FROM node:22.22.0
 
 RUN apt-get update && apt-get install -y \
-  git \
+  curl \
+  tmux \
   locales \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
