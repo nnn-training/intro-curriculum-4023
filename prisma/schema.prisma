@@ -44,6 +44,7 @@ model Candidate {
   schedule       Schedule       @relation(fields: [scheduleId], references: [scheduleId], onDelete: Cascade)
   availabilities Availability[]
 
+  @@unique([candidateId, scheduleId])
   @@index(fields: [scheduleId])
   @@map(name: "candidates")
 }
@@ -53,7 +54,7 @@ model Availability {
   userId       Int
   availability Int       @default(0)
   scheduleId   String    @db.Uuid
-  candidate    Candidate @relation(fields: [candidateId], references: [candidateId], onDelete: Cascade)
+  candidate    Candidate @relation(fields: [candidateId, scheduleId], references: [candidateId, scheduleId], onDelete: Cascade)
   user         User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@id(fields: [candidateId, userId], name: "availabilityCompositeId")
