@@ -71,7 +71,7 @@ describe("/login", () => {
 });
 
 describe("/logout", () => {
-  test("/ にリダイレクトされる", async () => {
+  test("ログアウト時に / へリダイレクトされる", async () => {
     const app = require("./app");
     const res = await app.request("/logout");
     expect(res.headers.get("Location")).toBe("/");
